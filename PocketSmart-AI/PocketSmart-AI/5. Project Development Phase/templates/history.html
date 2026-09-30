@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PocketSmart AI – History</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--navy:#0F2D5A;--navy2:#0A2244;--navy3:#071A35;--blue:#1E6FD9;--blue-lt:#4189E8;--blue-pale:#EEF4FE;--blue-mid:#CCDCFB;--gold:#F5A623;--gold-lt:#FFD07A;--white:#FFFFFF;--off:#F7F9FC;--text:#0A1628;--text2:#1E2E46;--muted:#5C718A;--border:#DDE5F0;--shadow:0 4px 20px rgba(10,34,68,0.08);}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--off);min-height:100vh;}
+    a{text-decoration:none;color:inherit;}
+
+    /* NAV */
+    nav{background:var(--white);border-bottom:2px solid var(--border);height:64px;padding:0 44px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(10,34,68,0.07);}
+    .nav-logo{font-size:1.3rem;font-weight:900;color:var(--navy);}
+    .nav-logo .dot{color:var(--blue);}
+    .nav-logo .ai{color:var(--gold);}
+    .nav-right{display:flex;align-items:center;gap:4px;}
+    .nl{padding:7px 13px;border-radius:8px;font-size:0.85rem;font-weight:800;color:var(--muted);transition:all .2s;}
+    .nl:hover{background:var(--blue-pale);color:var(--navy);}
+    .nl.active{background:var(--blue-pale);color:var(--navy);}
+    .nl.danger{color:#B91C1C;}
+    .nl.danger:hover{background:#FEF2F2;}
+    .user-chip{background:var(--navy);color:var(--white);padding:8px 16px;border-radius:8px;font-size:0.85rem;font-weight:800;}
+
+    /* PAGE HEADER */
+    .page-header{background:linear-gradient(150deg,var(--navy3) 0%,var(--navy) 55%,#1A4F9E 100%);padding:40px 44px;position:relative;overflow:hidden;}
+    .page-header::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:36px 36px;}
+    .ph-glow{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(30,111,217,0.4) 0%,transparent 70%);right:-40px;top:-80px;pointer-events:none;}
+    .ph-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1;display:flex;align-items:center;gap:16px;}
+    .ph-icon{width:58px;height:58px;border-radius:16px;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;}
+    .ph-text h1{font-size:1.6rem;font-weight:900;color:var(--white);margin-bottom:4px;}
+    .ph-text p{font-size:0.92rem;font-weight:600;color:rgba(255,255,255,0.72);}
+
+    /* MAIN */
+    main{max-width:1100px;margin:0 auto;padding:32px 44px;}
+
+    /* CONTROLS BAR */
+    .controls-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+    .history-count{background:var(--white);border:2px solid var(--border);border-radius:20px;padding:6px 16px;font-size:0.85rem;font-weight:800;color:var(--navy);}
+    .filter-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .filter-btn{padding:6px 14px;border-radius:20px;font-size:0.8rem;font-weight:800;border:2px solid var(--border);background:var(--white);color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s;}
+    .filter-btn:hover,.filter-btn.active{border-color:var(--navy);background:var(--navy);color:var(--white);}
+    .btn-danger{padding:8px 18px;border-radius:10px;font-size:0.84rem;font-weight:800;border:2px solid #FECACA;background:#FEF2F2;color:#B91C1C;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s;}
+    .btn-danger:hover{background:#FEE2E2;border-color:#FCA5A5;}
+
+    /* STATES */
+    .loading-state{background:var(--white);border:2px solid var(--border);border-radius:20px;padding:56px 28px;text-align:center;}
+    .spinner{width:44px;height:44px;border:4px solid var(--blue-mid);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .loading-state p{font-size:0.92rem;font-weight:700;color:var(--muted);}
+
+    .empty-state{background:var(--white);border:2px dashed var(--border);border-radius:20px;padding:64px 28px;text-align:center;}
+    .es-icon{font-size:3rem;margin-bottom:12px;opacity:0.3;}
+    .es-title{font-size:1.05rem;font-weight:900;color:var(--text);margin-bottom:6px;}
+    .es-sub{font-size:0.86rem;font-weight:600;color:var(--muted);margin-bottom:20px;}
+    .btn-primary{display:inline-block;background:var(--navy);color:var(--white);padding:10px 24px;border-radius:10px;font-weight:800;font-size:0.88rem;transition:background .2s;}
+    .btn-primary:hover{background:var(--navy2);}
+
+    /* HISTORY CARDS */
+    .history-list{display:flex;flex-direction:column;gap:16px;}
+    .history-card{background:var(--white);border:2px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .2s;}
+    .history-card:hover{box-shadow:0 8px 32px rgba(10,34,68,0.13);}
+
+    .hc-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+    .hc-left{display:flex;align-items:center;gap:10px;}
+    .hc-badge{padding:4px 12px;border-radius:20px;font-size:0.76rem;font-weight:900;text-transform:capitalize;letter-spacing:0.4px;}
+    .badge-jewelry{background:rgba(245,166,35,0.2);color:var(--gold-lt);border:1.5px solid rgba(245,166,35,0.4);}
+    .badge-home{background:rgba(30,111,217,0.25);color:#93C5FD;border:1.5px solid rgba(30,111,217,0.4);}
+    .badge-party{background:rgba(167,139,250,0.25);color:#C4B5FD;border:1.5px solid rgba(167,139,250,0.4);}
+    .badge-default{background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);border:1.5px solid rgba(255,255,255,0.2);}
+    .hc-budget{background:rgba(255,255,255,0.12);color:var(--white);padding:4px 12px;border-radius:20px;font-size:0.8rem;font-weight:900;}
+    .hc-date{font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.55);}
+
+    .hc-body{padding:0;}
+
+    /* Parsed result sections */
+    .result-section{border-bottom:1px solid var(--border);padding:16px 20px;}
+    .result-section:last-child{border-bottom:none;}
+    .rs-title{display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:900;color:var(--navy);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:12px;}
+
+    /* Items */
+    .hi-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+    .hi-item:last-child{border-bottom:none;}
+    .hi-dot{width:9px;height:9px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:5px;}
+    .hi-info{flex:1;}
+    .hi-name{font-size:0.92rem;font-weight:900;color:var(--navy);margin-bottom:2px;}
+    .hi-desc{font-size:0.8rem;font-weight:600;color:var(--muted);line-height:1.4;}
+    .hi-price{background:var(--blue);color:white;font-size:0.76rem;font-weight:900;padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+
+    /* Tips */
+    .hi-tip{display:flex;align-items:flex-start;gap:9px;padding:5px 0;}
+    .hi-tip-dot{width:16px;height:16px;border-radius:50%;background:var(--gold-lt);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#92400E;font-weight:900;flex-shrink:0;margin-top:2px;}
+    .hi-tip-txt{font-size:0.82rem;font-weight:600;color:var(--text2);line-height:1.4;}
+
+    /* Outfit analysis tags */
+    .oa-tags{display:flex;gap:8px;flex-wrap:wrap;}
+    .oa-tag{background:var(--off);border:2px solid var(--border);border-radius:20px;padding:4px 12px;font-size:0.78rem;font-weight:700;color:var(--text2);}
+
+    /* Fallback text result */
+    .raw-result{padding:16px 20px;font-size:0.84rem;font-weight:600;color:var(--text2);line-height:1.7;}
+    .raw-result h3{font-size:0.92rem;font-weight:900;color:var(--navy);margin:10px 0 4px;}
+    .raw-result strong{color:var(--navy);}
+    .raw-result ul{padding-left:18px;margin:6px 0;}
+    .raw-result li{margin-bottom:3px;}
+
+    @media(max-width:768px){nav{height:auto;min-height:64px;padding:8px 16px;flex-wrap:wrap;row-gap:8px;}.nav-right{flex:1 1 200px;flex-wrap:wrap;justify-content:flex-end;gap:2px;}main{padding:20px 16px;}.page-header{padding:28px 16px;}.controls-bar{flex-direction:column;align-items:flex-start;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">PocketSmart<span class="dot">.</span><span class="ai">AI</span></div>
+  <div class="nav-right">
+    <a href="/dashboard" class="nl">Dashboard</a>
+    <a href="/home-planner" class="nl">🏠 Home</a>
+    <a href="/party-planner" class="nl">🎉 Party</a>
+    <a href="/jewelry-planner" class="nl">💍 Jewelry</a>
+    <a href="/history" class="nl active">📜 History</a>
+    <span class="user-chip" id="userChip">👤 User</span>
+    <a href="/logout" class="nl danger">Logout</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="ph-glow"></div>
+  <div class="ph-inner">
+    <div class="ph-icon">📜</div>
+    <div class="ph-text">
+      <h1>Recommendation History</h1>
+      <p>Review your saved planning recommendations</p>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="controls-bar">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span class="history-count" id="historyCount">Loading...</span>
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="filterHistory('all', this)">All</button>
+        <button class="filter-btn" onclick="filterHistory('jewelry', this)">💍 Jewelry</button>
+        <button class="filter-btn" onclick="filterHistory('home', this)">🏠 Home</button>
+        <button class="filter-btn" onclick="filterHistory('party', this)">🎉 Party</button>
+      </div>
+    </div>
+    <button class="btn-danger" onclick="clearHistory()">🗑️ Clear History</button>
+  </div>
+
+  <div id="historyList" class="history-list">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your history...</p>
+    </div>
+  </div>
+</main>
+
+<script>
+  document.getElementById('userChip').textContent = '👤 ' + (localStorage.getItem('username') || 'User');
+
+  function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  }
+
+  let allHistory = [];
+
+  function fmt(n) { return '₹' + Number(n).toLocaleString('en-IN'); }
+
+  function getCategoryEmoji(cat) {
+    return { home: '🏠', party: '🎉', jewelry: '💍' }[cat] || '📋';
+  }
+
+  function getBadgeClass(cat) {
+    return { jewelry: 'badge-jewelry', home: 'badge-home', party: 'badge-party' }[cat] || 'badge-default';
+  }
+
+  function extractJSON(text) {
+    if (!text) return null;
+    try { return JSON.parse(text.trim()); } catch(_) {}
+    const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (fenced) { try { return JSON.parse(fenced[1].trim()); } catch(_) {} }
+    const start = text.indexOf('{');
+    const end   = text.lastIndexOf('}');
+    if (start !== -1 && end !== -1 && end > start) {
+      try { return JSON.parse(text.slice(start, end + 1)); } catch(_) {}
+    }
+    return null;
+  }
+
+  function renderParsedResult(parsed, category) {
+    let html = '';
+
+    // Outfit analysis (jewelry)
+    if (parsed.outfit_analysis) {
+      const oa = parsed.outfit_analysis;
+      const tags = [
+        oa.colors    ? `<div class="oa-tag">🎨 ${escapeHTML(oa.colors)}</div>` : '',
+        oa.style     ? `<div class="oa-tag">👗 ${escapeHTML(oa.style)}</div>` : '',
+        oa.formality ? `<div class="oa-tag">✨ ${escapeHTML(oa.formality)}</div>` : '',
+      ].filter(Boolean).join('');
+      if (tags) {
+        html += `<div class="result-section">
+          <div class="rs-title"><span>👗</span> Outfit Analysis</div>
+          <div class="oa-tags">${tags}</div>
+        </div>`;
+      }
+    }
+
+    // ✅ FIX: Handle categories structure (home & party planners)
+    if (parsed.categories && parsed.categories.length) {
+      parsed.categories.forEach(cat => {
+        const itemsHtml = (cat.items || []).map(item => `
+          <div class="hi-item">
+            <div class="hi-dot"></div>
+            <div class="hi-info">
+              <div class="hi-name">${escapeHTML(item.name || 'Item')}</div>
+              ${item.description ? `<div class="hi-desc">${escapeHTML(item.description)}</div>` : ''}
+            </div>
+            ${item.price ? `<div class="hi-price">${fmt(item.price)}</div>` : ''}
+          </div>`).join('');
+        html += `<div class="result-section">
+          <div class="rs-title"><span>${escapeHTML(cat.icon || '📦')}</span> ${escapeHTML(cat.name)} — <span style="color:var(--blue);font-weight:900;text-transform:none;">${fmt(cat.allocation)}</span></div>
+          ${itemsHtml}
+        </div>`;
+      });
+    }
+
+    // Flat items (jewelry structure)
+    const items = parsed.jewelry || parsed.recommendations || parsed.items || [];
+    if (items.length) {
+      const itemsHtml = items.map(item => `
+        <div class="hi-item">
+          <div class="hi-dot"></div>
+          <div class="hi-info">
+              <div class="hi-name">${escapeHTML(item.name || item.type || 'Item')}</div>
+              ${item.description ? `<div class="hi-desc">${escapeHTML(item.description)}</div>` : ''}
+          </div>
+          ${item.price ? `<div class="hi-price">${fmt(item.price)}</div>` : ''}
+        </div>`).join('');
+      html += `<div class="result-section">
+        <div class="rs-title"><span>💎</span> Recommendations</div>
+        ${itemsHtml}
+      </div>`;
+    }
+
+    // Tips
+    if (parsed.tips && parsed.tips.length) {
+      const tipsHtml = parsed.tips.map(t => `
+        <div class="hi-tip">
+          <div class="hi-tip-dot">✓</div>
+          <div class="hi-tip-txt">${escapeHTML(t)}</div>
+        </div>`).join('');
+      html += `<div class="result-section">
+        <div class="rs-title"><span>💡</span> Tips & Suggestions</div>
+        ${tipsHtml}
+      </div>`;
+    }
+
+    return html || null;
+  }
+
+  function formatFallback(text) {
+    return '<div class="raw-result">' + escapeHTML(text)
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.+)$/gm, '<h3>$1</h3>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>\n?)+/g, s => `<ul>${s}</ul>`)
+      .replace(/\n\n/g, '<br/><br/>') + '</div>';
+  }
+
+  function renderCard(item) {
+    const parsed = extractJSON(item.result);
+    const bodyHtml = parsed
+      ? (renderParsedResult(parsed, item.category) || formatFallback(item.result))
+      : formatFallback(item.result || '');
+
+    // ✅ FIX: Calculate totalSpent for both categories (home/party) and flat items (jewelry)
+    const totalSpent = parsed ? (() => {
+      if (parsed.categories && parsed.categories.length)
+        return parsed.categories.reduce((s, c) => s + (Number(c.allocation) || 0), 0);
+      return (parsed.jewelry || parsed.recommendations || []).reduce((s, i) => s + (Number(i.price) || 0), 0);
+    })() : 0;
+
+    return `
+      <div class="history-card" data-category="${escapeHTML(item.category || 'other')}">
+        <div class="hc-header">
+          <div class="hc-left">
+            <span class="hc-badge ${getBadgeClass(item.category)}">${getCategoryEmoji(item.category)} ${escapeHTML(item.category || 'General')}</span>
+            ${item.budget ? `<span class="hc-budget">Budget: ${fmt(item.budget)}</span>` : ''}
+            ${totalSpent ? `<span class="hc-budget" style="background:rgba(34,197,94,0.2);color:#86EFAC;">Spent: ${fmt(totalSpent)}</span>` : ''}
+          </div>
+          <span class="hc-date">${new Date(item.timestamp).toLocaleString('en-IN', {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</span>
+        </div>
+        <div class="hc-body">${bodyHtml}</div>
+      </div>`;
+  }
+
+  function filterHistory(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cards = document.querySelectorAll('.history-card');
+    cards.forEach(c => {
+      c.style.display = (cat === 'all' || c.dataset.category === cat) ? 'block' : 'none';
+    });
+  }
+
+  async function loadHistory() {
+    try {
+      const res  = await fetch('/api/history');
+      const data = await res.json();
+      allHistory = (data.history || []).reverse();
+      document.getElementById('historyCount').textContent = `${data.total} recommendation${data.total !== 1 ? 's' : ''}`;
+      const list = document.getElementById('historyList');
+      if (data.total === 0) {
+        list.innerHTML = `<div class="empty-state">
+          <div class="es-icon">📭</div>
+          <div class="es-title">No History Yet</div>
+          <p class="es-sub">Plans you create will appear here for later review.</p>
+          <a href="/dashboard" class="btn-primary">Go to Dashboard</a>
+        </div>`;
+        return;
+      }
+      list.innerHTML = allHistory.map(renderCard).join('');
+    } catch {
+      document.getElementById('historyList').innerHTML = `<div class="empty-state">
+        <div class="es-icon">⚠️</div>
+        <div class="es-title">Failed to Load History</div>
+        <p class="es-sub">Could not connect to the server. Please try again.</p>
+      </div>`;
+    }
+  }
+
+  async function clearHistory() {
+    if (!confirm('Clear all recommendation history? This cannot be undone.')) return;
+    await fetch('/api/history', { method: 'DELETE' });
+    loadHistory();
+  }
+
+  loadHistory();
+</script>
+</body>
+</html>

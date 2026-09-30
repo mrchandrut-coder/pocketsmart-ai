@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PocketSmart AI – Jewelry Budget Planner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0F2D5A;
+      --navy2: #0A2244;
+      --navy3: #071A35;
+      --blue: #1E6FD9;
+      --blue-lt: #4189E8;
+      --blue-pale: #EEF4FE;
+      --blue-mid: #CCDCFB;
+      --gold: #F5A623;
+      --gold-lt: #FFD07A;
+      --white: #FFFFFF;
+      --off: #F7F9FC;
+      --text: #0A1628;
+      --text2: #1E2E46;
+      --muted: #5C718A;
+      --border: #DDE5F0;
+      --shadow: 0 4px 20px rgba(10, 34, 68, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      background: var(--off);
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    nav {
+      background: var(--white);
+      border-bottom: 2px solid var(--border);
+      height: 64px;
+      padding: 0 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(10, 34, 68, 0.07);
+    }
+
+    .nav-logo {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .nav-logo .dot {
+      color: var(--blue);
+    }
+
+    .nav-logo .ai {
+      color: var(--gold);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nl {
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--muted);
+      transition: all .2s;
+    }
+
+    .nl:hover {
+      background: var(--blue-pale);
+      color: var(--navy);
+    }
+
+    .nl.active {
+      background: var(--blue-pale);
+      color: var(--navy);
+    }
+
+    .nl.danger {
+      color: #B91C1C;
+    }
+
+    .nl.danger:hover {
+      background: #FEF2F2;
+    }
+
+    .user-chip {
+      background: var(--navy);
+      color: var(--white);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .page-header {
+      background: linear-gradient(150deg, var(--navy3) 0%, var(--navy) 55%, #1A4F9E 100%);
+      padding: 40px 44px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px);
+      background-size: 36px 36px;
+    }
+
+    .ph-glow {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(30, 111, 217, 0.4) 0%, transparent 70%);
+      right: -40px;
+      top: -80px;
+      pointer-events: none;
+    }
+
+    .ph-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ph-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+
+    .ph-text h1 {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .ph-text p {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 44px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 370px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    /* FORM */
+    .form-card {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: sticky;
+      top: 84px;
+    }
+
+    .fch {
+      background: var(--blue-pale);
+      border-bottom: 2px solid var(--blue-mid);
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .fch h2 {
+      font-size: 0.97rem;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .form-body {
+      padding: 20px 22px;
+    }
+
+    .fsec {
+      background: var(--off);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .fsec-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      font-weight: 900;
+      color: var(--navy);
+      margin-bottom: 14px;
+    }
+
+    .frow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .frow:last-child {
+      margin-bottom: 0;
+    }
+
+    .fgroup {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .fgroup.full {
+      grid-column: 1/-1;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--text2);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 2px solid var(--border);
+      border-radius: 9px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--white);
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(30, 111, 217, 0.1);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #9EB0C8;
+      font-weight: 600;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235C718A' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 68px;
+    }
+
+    .cbgroup {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .cbitem {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 10px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .cbitem:hover {
+      border-color: var(--blue-mid);
+    }
+
+    .cbitem input[type=checkbox] {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--navy);
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .cbitem label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text2);
+      cursor: pointer;
+      margin: 0;
+    }
+
+    /* Image upload */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      background: var(--white);
+      position: relative;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--blue);
+      background: var(--blue-pale);
+    }
+
+    .upload-zone input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .uz-icon {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    .uz-text {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .uz-hint {
+      font-size: 0.74rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .img-preview {
+      display: none;
+      position: relative;
+      margin-top: 10px;
+    }
+
+    .img-preview img {
+      width: 100%;
+      max-height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+    }
+
+    .img-remove {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: var(--navy);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .btn-gen {
+      width: 100%;
+      padding: 13px;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(15, 45, 90, 0.28);
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn-gen:hover {
+      background: var(--navy2);
+      transform: translateY(-1px);
+    }
+
+    .btn-gen:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* STATES */
+    .res-empty {
+      background: var(--white);
+      border: 2px dashed var(--border);
+      border-radius: 20px;
+      padding: 56px 28px;
+      text-align: center;
+    }
+
+    .re-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      opacity: 0.3;
+    }
+
+    .re-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .re-sub {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .loading {
+      display: none;
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: 56px 28px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid var(--blue-mid);
+      border-top-color: var(--navy);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading p {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    /* RESULT */
+    .result-wrap {
+      display: none;
+    }
+
+    .res-topbar {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      border-radius: 16px;
+      padding: 16px 22px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .res-topbar h2 {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--white);
+    }
+
+    /* Budget summary */
+    .bsum {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .bsum-head {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+      padding: 11px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bsum-head span {
+      font-size: 0.95rem;
+    }
+
+    .bsum-head h3 {
+      font-size: 0.92rem;
+      font-weight: 900;
+      color: var(--white);
+    }
+
+    .bsum-body {
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .bsum-item .lbl {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 3px;
+    }
+
+    .bsum-item .val {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .bsum-item .val.green {
+      color: #15803D;
+    }
+
+    /* Outfit analysis */
+    .outfit-card {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      display: none;
+    }
+
+    .oc-head {
+      padding: 11px 18px;
+      background: var(--blue-pale);
+      border-bottom: 2px solid var(--blue-mid);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .oc-head span {
+      font-size: 0.95rem;
+    }
+
+    .oc-head h3 {
+      font-size: 0.92rem;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .oc-body {
+      padding: 12px 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .oc-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--off);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text2);
+    }
+
+    .oc-tag .ticon {
+      font-size: 0.9rem;
+    }
+
+    /* Jewelry recommendations */
+    .jwl-section {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .jwl-head {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+      padding: 11px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .jwl-head span {
+      font-size: 0.95rem;
+    }
+
+    .jwl-head h3 {
+      font-size: 0.92rem;
+      font-weight: 900;
+      color: var(--white);
+    }
+
+    .jwl-items {
+      padding: 0;
+    }
+
+    .jwl-item {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .jwl-item:last-child {
+      border-bottom: none;
+    }
+
+    .ji-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .ji-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+    }
+
+    .ji-name {
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: var(--navy);
+      flex: 1;
+    }
+
+    .ji-price {
+      background: var(--blue);
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .ji-desc {
+      font-size: 0.83rem;
+      color: var(--text2);
+      font-weight: 600;
+      margin-bottom: 5px;
+      line-height: 1.5;
+    }
+
+    .ji-style {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .ji-style strong {
+      color: var(--navy);
+    }
+
+    .shop-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .shop-lbl {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .sbtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 6px;
+      border: 1.5px solid;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+
+    .s-amazon {
+      background: #FFF8E7;
+      color: #B45309;
+      border-color: #FDE68A;
+    }
+
+    .s-amazon:hover {
+      background: #FDE68A;
+    }
+
+    .s-flipkart {
+      background: #EEF4FE;
+      color: #1D4ED8;
+      border-color: #BFDBFE;
+    }
+
+    .s-flipkart:hover {
+      background: #BFDBFE;
+    }
+
+    .s-bluestone {
+      background: #F0F9FF;
+      color: #0369A1;
+      border-color: #BAE6FD;
+    }
+
+    .s-bluestone:hover {
+      background: #BAE6FD;
+    }
+
+    .s-tanishq {
+      background: #FDF4FF;
+      color: #7E22CE;
+      border-color: #E9D5FF;
+    }
+
+    .s-tanishq:hover {
+      background: #E9D5FF;
+    }
+
+    .s-caratlane {
+      background: #FFF7ED;
+      color: #C2410C;
+      border-color: #FED7AA;
+    }
+
+    .s-caratlane:hover {
+      background: #FED7AA;
+    }
+
+    .s-melorra {
+      background: #F0FDF4;
+      color: #166534;
+      border-color: #BBF7D0;
+    }
+
+    .s-melorra:hover {
+      background: #BBF7D0;
+    }
+
+    .s-malabar {
+      background: #FFF8E7;
+      color: #92400E;
+      border-color: #FDE68A;
+    }
+
+    .s-malabar:hover {
+      background: #FDE68A;
+    }
+
+    .s-other {
+      background: var(--off);
+      color: var(--muted);
+      border-color: var(--border);
+    }
+
+    /* Styling tips */
+    .tips-card {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      display: none;
+    }
+
+    .tips-head {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+      padding: 11px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tips-head span {
+      font-size: 0.95rem;
+    }
+
+    .tips-head h3 {
+      font-size: 0.92rem;
+      font-weight: 900;
+      color: var(--white);
+    }
+
+    .tips-body {
+      padding: 12px 18px;
+      background: #FFFBEB;
+      border-top: 2px solid #FEF3C7;
+    }
+
+    .tip-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 6px 0;
+    }
+
+    .tip-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--gold-lt);
+      border: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      color: #92400E;
+      font-weight: 900;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .tip-txt {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    .res-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn-new {
+      background: var(--navy);
+      color: var(--white);
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.86rem;
+      border: none;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      transition: background .2s;
+    }
+
+    .btn-new:hover {
+      background: var(--navy2);
+    }
+
+    .btn-copy {
+      background: var(--white);
+      color: var(--text2);
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.86rem;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      transition: all .2s;
+    }
+
+    .btn-copy:hover {
+      border-color: var(--navy);
+      color: var(--navy);
+    }
+
+    @media(max-width:900px) {
+      nav {
+        height: auto;
+        min-height: 64px;
+        padding: 8px 16px;
+        flex-wrap: wrap;
+        row-gap: 8px;
+      }
+
+      .nav-right {
+        flex: 1 1 200px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 2px;
+      }
+
+      main {
+        padding: 20px 16px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .form-card {
+        position: static;
+      }
+
+      .page-header {
+        padding: 28px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="nav-logo">PocketSmart<span class="dot">.</span><span class="ai">AI</span></div>
+    <div class="nav-right">
+      <a href="/dashboard" class="nl">Dashboard</a>
+      <a href="/home-planner" class="nl">🏠 Home</a>
+      <a href="/party-planner" class="nl">🎉 Party</a>
+      <a href="/jewelry-planner" class="nl active">💍 Jewelry</a>
+      <a href="/history" class="nl">📜 History</a>
+      <span class="user-chip" id="userChip">👤 User</span>
+      <a href="/logout" class="nl danger">Logout</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="ph-glow"></div>
+    <div class="ph-inner">
+      <div class="ph-icon">💍</div>
+      <div class="ph-text">
+        <h1>Jewelry Budget Planner</h1>
+        <p>Get jewelry ideas shaped by your occasion, budget, and style preferences</p>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="layout">
+
+      <!-- FORM -->
+      <div class="form-card">
+        <div class="fch"><span>📋</span>
+          <h2>Your Preferences</h2>
+        </div>
+        <div class="form-body">
+
+          <div class="fsec">
+            <div class="fsec-title"><span>💰</span> Budget Details</div>
+            <div class="fgroup">
+              <label>Total Budget (₹) *</label>
+              <input type="number" id="budget" placeholder="e.g. 10000" min="500" />
+            </div>
+          </div>
+
+          <div class="fsec">
+            <div class="fsec-title"><span>💍</span> Occasion & Preferences</div>
+            <div class="frow">
+              <div class="fgroup full">
+                <label>Occasion *</label>
+                <select id="occasion">
+                  <option value="">Select occasion</option>
+                  <option>Birthday</option>
+                  <option>Wedding</option>
+                  <option>Engagement</option>
+                  <option>Anniversary</option>
+                  <option>Festival / Diwali</option>
+                  <option>Casual / Daily Wear</option>
+                  <option>Office / Professional</option>
+                  <option>Party / Night Out</option>
+                  <option>Baby Shower / Naming</option>
+                  <option>Gift</option>
+                </select>
+              </div>
+            </div>
+            <div class="frow">
+              <div class="fgroup full">
+                <label>Jewelry Types</label>
+                <div class="cbgroup">
+                  <div class="cbitem"><input type="checkbox" id="j_earring" value="Earrings" /><label for="j_earring">💎
+                      Earrings</label></div>
+                  <div class="cbitem"><input type="checkbox" id="j_necklace" value="Necklace" /><label
+                      for="j_necklace">📿 Necklace</label></div>
+                  <div class="cbitem"><input type="checkbox" id="j_bangle" value="Bangles" /><label for="j_bangle">🪬
+                      Bangles</label></div>
+                  <div class="cbitem"><input type="checkbox" id="j_ring" value="Ring" /><label for="j_ring">💍
+                      Ring</label></div>
+                  <div class="cbitem"><input type="checkbox" id="j_maang" value="Maangtika" /><label for="j_maang">✨
+                      Maangtika</label></div>
+                  <div class="cbitem"><input type="checkbox" id="j_bracelet" value="Bracelet" /><label
+                      for="j_bracelet">📿 Bracelet</label></div>
+                </div>
+              </div>
+            </div>
+            <div class="frow">
+              <div class="fgroup full">
+                <label>Metal Preference</label>
+                <select id="metal">
+                  <option value="">No preference</option>
+                  <option>Gold</option>
+                  <option>Silver</option>
+                  <option>Rose Gold</option>
+                  <option>Platinum</option>
+                  <option>Artificial / Imitation</option>
+                  <option>Oxidised</option>
+                </select>
+              </div>
+            </div>
+            <div class="frow">
+              <div class="fgroup full">
+                <label>Preferred Platforms</label>
+                <div class="cbgroup">
+                  <div class="cbitem"><input type="checkbox" id="p_amazon" value="Amazon" checked /><label
+                      for="p_amazon">Amazon</label></div>
+                  <div class="cbitem"><input type="checkbox" id="p_flipkart" value="Flipkart" checked /><label
+                      for="p_flipkart">Flipkart</label></div>
+                  <div class="cbitem"><input type="checkbox" id="p_bluestone" value="Bluestone" checked /><label
+                      for="p_bluestone">Bluestone</label></div>
+                  <div class="cbitem"><input type="checkbox" id="p_tanishq" value="Tanishq" /><label
+                      for="p_tanishq">Tanishq</label></div>
+                  <div class="cbitem"><input type="checkbox" id="p_caratlane" value="Caratlane" /><label
+                      for="p_caratlane">CaratLane</label></div>
+                  <div class="cbitem"><input type="checkbox" id="p_melorra" value="Melorra" /><label
+                      for="p_melorra">Melorra</label></div>
+                </div>
+              </div>
+            </div>
+            <div class="frow">
+              <div class="fgroup full">
+                <label>Style Preferences</label>
+                <textarea id="stylePrefs" placeholder="Describe your style, colors, materials, etc."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="fsec">
+            <div class="fsec-title"><span>👗</span> Upload Outfit Image <span
+                style="font-size:0.74rem;font-weight:600;color:var(--muted);margin-left:4px;">(Optional — for color
+                matching)</span></div>
+            <div class="upload-zone" id="uploadZone">
+              <input type="file" id="imgInput" accept="image/*" onchange="handleImg(this)" />
+              <div class="uz-icon">📷</div>
+              <div class="uz-text">Click to upload outfit photo</div>
+              <div class="uz-hint">JPG, PNG, WEBP · Max 5MB</div>
+            </div>
+            <div class="img-preview" id="imgPreview">
+              <img id="previewImg" src="" alt="Outfit preview" />
+              <button class="img-remove" onclick="removeImg()">✕ Remove Image</button>
+            </div>
+          </div>
+
+          <button class="btn-gen" id="genBtn" onclick="generate()">✦ Get Recommendations</button>
+        </div>
+      </div>
+
+      <!-- RESULT PANEL -->
+      <div id="resultPanel">
+        <div class="res-empty" id="emptyState">
+          <div class="re-icon">💍</div>
+          <div class="re-title">Your Personalized Jewelry Recommendations Will Appear Here</div>
+          <p class="re-sub">Set your budget, occasion and preferences. Optionally upload an outfit photo for
+            color-matched suggestions, then click Get Recommendations.</p>
+        </div>
+        <div class="loading" id="loadingState">
+          <div class="spinner"></div>
+          <p>Analyzing your preferences and generating jewelry recommendations...</p>
+        </div>
+
+        <div class="result-wrap" id="resultWrap">
+
+          <div class="res-topbar">
+            <h2>💍 Your Personalized Jewelry Recommendations</h2>
+            <span id="resultSource" style="color:#ffd37c;font-size:0.78rem;font-weight:800;">Budget recommendation</span>
+          </div>
+
+          <!-- Budget Summary -->
+          <div class="bsum">
+            <div class="bsum-head"><span>💰</span>
+              <h3>Budget Summary</h3>
+            </div>
+            <div class="bsum-body">
+              <div class="bsum-item">
+                <div class="lbl">Total Budget</div>
+                <div class="val" id="bsTotal">—</div>
+              </div>
+              <div class="bsum-item">
+                <div class="lbl">Remaining Budget</div>
+                <div class="val green" id="bsRemain">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Outfit Analysis (shown only if image uploaded) -->
+          <div class="outfit-card" id="outfitCard">
+            <div class="oc-head"><span>👗</span>
+              <h3>Outfit Analysis</h3>
+            </div>
+            <div class="oc-body" id="outfitBody"></div>
+          </div>
+
+          <!-- Jewelry Recommendations -->
+          <div class="jwl-section">
+            <div class="jwl-head"><span>💎</span>
+              <h3>Jewelry Recommendations</h3>
+            </div>
+            <div class="jwl-items" id="jwlItems"></div>
+          </div>
+
+          <!-- Styling Tips -->
+          <div class="tips-card" id="tipsCard">
+            <div class="tips-head"><span>💡</span>
+              <h3>Styling Tips</h3>
+            </div>
+            <div class="tips-body" id="tipsBody"></div>
+          </div>
+
+          <div class="res-actions">
+            <button class="btn-new" onclick="resetForm()">+ New Plan</button>
+            <button class="btn-copy" id="copyBtn" onclick="copyResult()">📋 Copy All</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('userChip').textContent = '👤 ' + (localStorage.getItem('username') || 'User');
+
+    function escapeHTML(value) {
+      return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    }
+
+    let imgBase64 = null;
+
+    function getChecked(ids) { return ids.map(id => document.getElementById(id)).filter(c => c && c.checked).map(c => c.value); }
+    function fmt(n) { return '₹' + Number(n).toLocaleString('en-IN'); }
+
+    const SHOP = {
+      'Amazon': { lbl: 'Amazon', cls: 's-amazon', u: 'https://www.amazon.in/s?k=' },
+      'Flipkart': { lbl: 'Flipkart', cls: 's-flipkart', u: 'https://www.flipkart.com/search?q=' },
+      'Bluestone': { lbl: 'Bluestone', cls: 's-bluestone', u: 'https://www.bluestone.com/search.html#q=' },
+      'Tanishq': { lbl: 'Tanishq', cls: 's-tanishq', u: 'https://www.tanishq.co.in/search?q=' },
+      'Caratlane': { lbl: 'CaratLane', cls: 's-caratlane', u: 'https://www.caratlane.com/catalogsearch/result/?q=' },
+      'Melorra': { lbl: 'Melorra', cls: 's-melorra', u: 'https://www.melorra.com/search?q=' },
+      'Malabar': { lbl: 'Malabar', cls: 's-malabar', u: 'https://www.malabargoldanddiamonds.com/search?q=' },
+    };
+
+    function shopBtns(name, platforms) {
+      const q = encodeURIComponent(name);
+      return platforms.map(p => {
+        const s = SHOP[p] || { lbl: p, cls: 's-other', u: '#' };
+        return `<a href="${s.u}${q}" target="_blank" rel="noopener noreferrer" class="sbtn ${escapeHTML(s.cls)}">${escapeHTML(s.lbl)}</a>`;
+      }).join('');
+    }
+
+    function handleImg(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        imgBase64 = e.target.result.split(',')[1];
+        document.getElementById('previewImg').src = e.target.result;
+        document.getElementById('imgPreview').style.display = 'block';
+        document.getElementById('uploadZone').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeImg() {
+      imgBase64 = null;
+      document.getElementById('imgInput').value = '';
+      document.getElementById('imgPreview').style.display = 'none';
+      document.getElementById('uploadZone').style.display = 'block';
+      document.getElementById('previewImg').src = '';
+    }
+
+    // ── FIXED: robust JSON extractor ──────────────────────────────────────────
+    function extractJSON(text) {
+      if (!text) return null;
+
+      // 1. Try direct parse first (cleanest case)
+      try { return JSON.parse(text.trim()); } catch (_) { }
+
+      // 2. Strip ```json ... ``` or ``` ... ``` fences
+      const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (fenced) { try { return JSON.parse(fenced[1].trim()); } catch (_) { } }
+
+      // 3. Find the outermost { ... } block in the string
+      const start = text.indexOf('{');
+      const end = text.lastIndexOf('}');
+      if (start !== -1 && end !== -1 && end > start) {
+        try { return JSON.parse(text.slice(start, end + 1)); } catch (_) { }
+      }
+
+      return null;
+    }
+    // ──────────────────────────────────────────────────────────────────────────
+
+    function renderResults(data, budget, platforms) {
+      const plat = platforms.length ? platforms : ['Amazon', 'Flipkart', 'Bluestone'];
+      const items = data.jewelry || data.recommendations || [];
+      const totalSpent = items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+
+      document.getElementById('bsTotal').textContent = fmt(budget);
+      document.getElementById('bsRemain').textContent = fmt(Math.max(0, budget - totalSpent));
+
+      if (data.outfit_analysis) {
+        document.getElementById('outfitCard').style.display = 'block';
+        const analysis = data.outfit_analysis;
+        const tags = [
+          analysis.colors ? `<div class="oc-tag"><span class="ticon">🎨</span> Colors: ${escapeHTML(analysis.colors)}</div>` : '',
+          analysis.style ? `<div class="oc-tag"><span class="ticon">👗</span> Style: ${escapeHTML(analysis.style)}</div>` : '',
+          analysis.formality ? `<div class="oc-tag"><span class="ticon">✨</span> Formality: ${escapeHTML(analysis.formality)}</div>` : '',
+        ].filter(Boolean).join('');
+        document.getElementById('outfitBody').innerHTML = tags || '<div class="oc-tag">No outfit details detected</div>';
+      }
+
+      document.getElementById('jwlItems').innerHTML = items.map(item => `
+      <div class="jwl-item">
+        <div class="ji-top">
+          <div class="ji-dot"></div>
+          <span class="ji-name">${escapeHTML(item.name || item.type)}</span>
+          <span class="ji-price">${fmt(item.price)}</span>
+        </div>
+        <div class="ji-desc">${escapeHTML(item.description)}</div>
+        ${item.style ? `<div class="ji-style">Style: <strong>${escapeHTML(item.style)}</strong></div>` : ''}
+        <div class="shop-row">
+          <span class="shop-lbl">Shop For This:</span>
+          ${shopBtns(item.name || item.type, plat)}
+        </div>
+      </div>`).join('');
+
+      if (data.tips && data.tips.length) {
+        document.getElementById('tipsCard').style.display = 'block';
+        document.getElementById('tipsBody').innerHTML = data.tips.map(tip =>
+          `<div class="tip-row"><div class="tip-dot">✓</div><div class="tip-txt">${escapeHTML(tip)}</div></div>`
+        ).join('');
+      }
+    }
+
+    async function generate() {
+      const budget = document.getElementById('budget').value;
+      const occasion = document.getElementById('occasion').value;
+      const metal = document.getElementById('metal').value;
+      const stylePrefs = document.getElementById('stylePrefs').value;
+      const jwlTypes = getChecked(['j_earring', 'j_necklace', 'j_bangle', 'j_ring', 'j_maang', 'j_bracelet']);
+      const platforms = getChecked(['p_amazon', 'p_flipkart', 'p_bluestone', 'p_tanishq', 'p_caratlane', 'p_melorra']);
+
+      if (!budget || !occasion) { alert('Please fill in Budget and Occasion.'); return; }
+
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('resultWrap').style.display = 'none';
+      document.getElementById('loadingState').style.display = 'block';
+      document.getElementById('genBtn').disabled = true;
+      document.getElementById('outfitCard').style.display = 'none';
+      document.getElementById('tipsCard').style.display = 'none';
+
+      try {
+        const res = await fetch('/generate-jewelry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ budget: parseInt(budget), occasion, jewelry_types: jwlTypes, metal_preference: metal, platforms, style_preferences: stylePrefs, image: imgBase64 || null })
+        });
+
+        const raw = await res.json();
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('resultSource').textContent = raw.source === 'gemini' ? '✦ Gemini recommendation' : 'Offline recommendation';
+
+        // ── FIXED: use robust extractor on all possible response fields ────────
+        const recText = raw.recommendations || raw.result || raw.response || '';
+        const parsed = extractJSON(recText);
+        // ──────────────────────────────────────────────────────────────────────
+
+        if (parsed && (parsed.jewelry || parsed.recommendations)) {
+          renderResults(parsed, parseInt(budget), platforms);
+          document.getElementById('resultWrap').style.display = 'block';
+        } else if (recText) {
+          // Fallback: show as formatted text
+          document.getElementById('bsTotal').textContent = fmt(parseInt(budget));
+          document.getElementById('bsRemain').textContent = '—';
+          document.getElementById('jwlItems').innerHTML = `<div style="padding:20px;line-height:1.8;font-size:0.91rem;">${mdToHtml(recText)}</div>`;
+          document.getElementById('resultWrap').style.display = 'block';
+        } else {
+          alert('Error: ' + (typeof raw.detail === 'string' ? raw.detail : JSON.stringify(raw)));
+          document.getElementById('emptyState').style.display = 'block';
+          document.getElementById('genBtn').disabled = false;
+          return;
+        }
+      } catch (err) {
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'block';
+        alert('Connection error: ' + err.message);
+      }
+      document.getElementById('genBtn').disabled = false;
+    }
+
+    function mdToHtml(t) {
+      return escapeHTML(t)
+        .replace(/^### (.+)$/gm, '<h3 style="color:var(--navy);font-weight:900;margin:12px 0 6px">$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2 style="color:var(--navy);font-weight:900;margin:14px 0 7px">$1</h2>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--navy)">$1</strong>')
+        .replace(/^- (.+)$/gm, '<li style="margin-bottom:4px">$1</li>')
+        .replace(/(<li[^>]*>.*<\/li>\n?)+/g, s => `<ul style="padding-left:20px;margin:8px 0">${s}</ul>`)
+        .replace(/\n\n/g, '<br/><br/>');
+    }
+
+    function resetForm() {
+      document.getElementById('resultWrap').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'block';
+      document.getElementById('tipsCard').style.display = 'none';
+      document.getElementById('outfitCard').style.display = 'none';
+      document.getElementById('jwlItems').innerHTML = '';
+      removeImg();
+      ['budget', 'occasion', 'metal', 'stylePrefs'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+    }
+
+    function copyResult() {
+      const lines = [];
+      document.querySelectorAll('.jwl-item').forEach(i => {
+        lines.push(i.querySelector('.ji-name').textContent + ' — ' + i.querySelector('.ji-price').textContent);
+        const desc = i.querySelector('.ji-desc');
+        if (desc) lines.push('  ' + desc.textContent);
+      });
+      document.querySelectorAll('.tip-txt').forEach(t => lines.push('💡 ' + t.textContent));
+      navigator.clipboard.writeText(lines.join('\n')).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => btn.textContent = '📋 Copy All', 2000);
+      });
+    }
+  </script>
+</body>
+
+</html>

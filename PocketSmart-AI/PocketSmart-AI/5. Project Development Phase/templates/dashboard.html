@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PocketSmart AI – Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0F2D5A;
+      --navy2: #0A2244;
+      --navy3: #071A35;
+      --blue: #1E6FD9;
+      --blue-lt: #4189E8;
+      --blue-pale: #EEF4FE;
+      --blue-mid: #CCDCFB;
+      --gold: #F5A623;
+      --gold-lt: #FFD07A;
+      --white: #FFFFFF;
+      --off: #F7F9FC;
+      --text: #0A1628;
+      --text2: #1E2E46;
+      --muted: #5C718A;
+      --border: #DDE5F0;
+      --shadow: 0 4px 20px rgba(10, 34, 68, 0.08);
+      --shadow2: 0 8px 36px rgba(10, 34, 68, 0.14);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      background: var(--off);
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* NAVBAR */
+    nav {
+      background: var(--white);
+      border-bottom: 2px solid var(--border);
+      height: 64px;
+      padding: 0 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(10, 34, 68, 0.07);
+    }
+
+    .nav-logo {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .nav-logo .dot {
+      color: var(--blue);
+    }
+
+    .nav-logo .ai {
+      color: var(--gold);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nl {
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--muted);
+      transition: all .2s;
+    }
+
+    .nl:hover {
+      background: var(--blue-pale);
+      color: var(--navy);
+    }
+
+    .nl.active {
+      background: var(--blue-pale);
+      color: var(--navy);
+    }
+
+    .nl.danger {
+      color: #B91C1C;
+    }
+
+    .nl.danger:hover {
+      background: #FEF2F2;
+    }
+
+    .user-chip {
+      background: var(--navy);
+      color: var(--white);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    /* BANNER */
+    .banner {
+      background: linear-gradient(150deg, var(--navy3) 0%, var(--navy) 55%, #1A4F9E 100%);
+      padding: 40px 44px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px);
+      background-size: 36px 36px;
+    }
+
+    .banner-glow {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(30, 111, 217, 0.4) 0%, transparent 70%);
+      right: -40px;
+      top: -80px;
+      pointer-events: none;
+    }
+
+    .banner-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner-text h1 {
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+
+    .banner-text h1 em {
+      font-style: normal;
+      color: var(--gold-lt);
+    }
+
+    .banner-text p {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.93rem;
+      font-weight: 600;
+    }
+
+    .banner-pill {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      color: var(--gold-lt);
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    /* MAIN */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 44px;
+    }
+
+    /* STATS */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .stat {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow);
+      transition: all .2s;
+    }
+
+    .stat:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow2);
+      border-color: var(--blue-mid);
+    }
+
+    .stat-ico {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .si-b {
+      background: var(--blue-pale);
+    }
+
+    .si-g {
+      background: #FFFBEB;
+    }
+
+    .si-p {
+      background: #F5F3FF;
+    }
+
+    .stat-val {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .stat-lbl {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* SECTION HEAD */
+    .sec-head {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 16px;
+      padding-left: 2px;
+    }
+
+    /* PLANNER GRID */
+    .planners {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+
+    .pc {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      display: block;
+      box-shadow: var(--shadow);
+      transition: all .25s;
+    }
+
+    .pc:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow2);
+      border-color: var(--blue-lt);
+    }
+
+    .pc-top {
+      height: 108px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .pt-b {
+      background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+    }
+
+    .pt-g {
+      background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+    }
+
+    .pt-p {
+      background: linear-gradient(135deg, #E0E7FF, #C7D2FE);
+    }
+
+    .pc-body {
+      padding: 18px 20px;
+    }
+
+    .pc-body h3 {
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 7px;
+    }
+
+    .pc-body p {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .pc-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: 13px;
+    }
+
+    .pct {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--blue-pale);
+      color: var(--blue);
+      border: 1.5px solid var(--blue-mid);
+    }
+
+    .pc-btn {
+      display: block;
+      background: var(--navy);
+      color: var(--white);
+      text-align: center;
+      padding: 9px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      transition: background .2s;
+    }
+
+    .pc-btn:hover {
+      background: var(--navy2);
+    }
+
+    /* ACTIVITY */
+    .activity {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 38px 20px;
+    }
+
+    .empty-ico {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      opacity: 0.3;
+    }
+
+    .empty-txt {
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .act-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .act-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .act-ico {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--blue-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .act-info {
+      flex: 1;
+    }
+
+    .act-name {
+      font-weight: 800;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .act-date {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .act-amt {
+      font-weight: 900;
+      color: var(--navy);
+      font-size: 0.9rem;
+    }
+
+    @media(max-width:900px) {
+      nav {
+        height: auto;
+        min-height: 64px;
+        padding: 8px 16px;
+        flex-wrap: wrap;
+        row-gap: 8px;
+      }
+
+      .nav-right {
+        flex: 1 1 200px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 2px;
+      }
+
+      main {
+        padding: 24px 20px;
+      }
+
+      .banner {
+        padding: 30px 20px;
+      }
+
+      .stats,
+      .planners {
+        grid-template-columns: 1fr;
+      }
+
+      .banner-pill {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="nav-logo">PocketSmart<span class="dot">.</span><span class="ai">AI</span></div>
+    <div class="nav-right">
+      <a href="/dashboard" class="nl active">Dashboard</a>
+      <a href="/home-planner" class="nl">🏠 Home</a>
+      <a href="/party-planner" class="nl">🎉 Party</a>
+      <a href="/jewelry-planner" class="nl">💍 Jewelry</a>
+      <a href="/history" class="nl">📜 History</a>
+      <span class="user-chip" id="userChip">👤 User</span>
+      <a href="/logout" class="nl danger">Logout</a>
+    </div>
+  </nav>
+
+  <div class="banner">
+    <div class="banner-glow"></div>
+    <div class="banner-inner">
+      <div class="banner-text">
+        <h1>Welcome back, <em id="heroUser">there</em>! 👋</h1>
+        <p>Choose a planner and build a practical budget for your next project</p>
+      </div>
+      <div class="banner-pill">Gemini optional · offline planning available</div>
+    </div>
+  </div>
+
+  <main>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-ico si-b">📊</div>
+        <div>
+          <div class="stat-val" id="totalRecs">0</div>
+          <div class="stat-lbl">Total Recommendations</div>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-ico si-g">🧠</div>
+        <div>
+          <div class="stat-val">3</div>
+          <div class="stat-lbl">Budget planning tools</div>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-ico si-p">🛒</div>
+        <div>
+          <div class="stat-val">10+</div>
+          <div class="stat-lbl">Platforms Covered</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-head">Our Smart Budget Planners</div>
+    <div class="planners">
+      <a href="/home-planner" class="pc">
+        <div class="pc-top pt-b">🏠</div>
+        <div class="pc-body">
+          <h3>Home Interior Budget Planner</h3>
+          <p>Budget-aware furniture, lighting, and decor ideas for every room.</p>
+          <div class="pc-tags"><span class="pct">Amazon</span><span class="pct">Flipkart</span><span
+              class="pct">IKEA</span></div>
+          <div class="pc-btn">Get Started →</div>
+        </div>
+      </a>
+      <a href="/party-planner" class="pc">
+        <div class="pc-top pt-g">🎉</div>
+        <div class="pc-body">
+          <h3>Party Budget Planner</h3>
+          <p>Plan birthdays, weddings & events with smart AI budget splits.</p>
+          <div class="pc-tags"><span class="pct">Swiggy</span><span class="pct">Zomato</span><span
+              class="pct">OYO</span></div>
+          <div class="pc-btn">Get Started →</div>
+        </div>
+      </a>
+      <a href="/jewelry-planner" class="pc">
+        <div class="pc-top pt-p">💍</div>
+        <div class="pc-body">
+          <h3>Jewelry Budget Planner</h3>
+          <p>Find perfect jewelry. Upload outfit image for AI color-matched suggestions.</p>
+          <div class="pc-tags"><span class="pct">Amazon</span><span class="pct">Flipkart</span><span
+              class="pct">Occasions</span></div>
+          <div class="pc-btn">Get Started →</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="sec-head">Recent Activity</div>
+    <div class="activity" id="actBox">
+      <div class="empty-state">
+        <div class="empty-ico">📭</div>
+        <p class="empty-txt">No recommendations yet. Start planning to see your activity here!</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function escapeHTML(value) {
+      return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    }
+
+    const u = localStorage.getItem('username') || 'there';
+    document.getElementById('heroUser').textContent = u;
+    document.getElementById('userChip').textContent = '👤 ' + u;
+    const em = { home: '🏠', party: '🎉', jewelry: '💍' };
+    const lm = { home: 'Home Interior', party: 'Party Budget', jewelry: 'Jewelry' };
+    fetch('/api/history').then(r => r.json()).then(d => {
+      document.getElementById('totalRecs').textContent = d.total || 0;
+      if (d.total > 0) {
+        document.getElementById('actBox').innerHTML = d.history.slice(-5).reverse().map(i => `
+        <div class="act-row">
+          <div class="act-ico">${em[i.category] || '📋'}</div>
+          <div class="act-info"><div class="act-name">${escapeHTML(lm[i.category] || i.category)} Recommendation</div><div class="act-date">${escapeHTML(new Date(i.timestamp).toLocaleString())}</div></div>
+          <div class="act-amt">₹${i.budget?.toLocaleString() || 'N/A'}</div>
+        </div>`).join('');
+      }
+    }).catch(() => { });
+  </script>
+</body>
+
+</html>

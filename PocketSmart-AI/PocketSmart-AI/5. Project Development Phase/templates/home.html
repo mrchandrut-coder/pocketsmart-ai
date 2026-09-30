@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PocketSmart AI – Smart Budget Planner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy:    #0F2D5A;
+      --navy2:   #0A2244;
+      --navy3:   #071A35;
+      --blue:    #1E6FD9;
+      --blue-lt: #4189E8;
+      --blue-pale: #EEF4FE;
+      --blue-mid:  #CCDCFB;
+      --gold:    #F5A623;
+      --gold-lt: #FFD07A;
+      --white:   #FFFFFF;
+      --off:     #F7F9FC;
+      --text:    #0A1628;
+      --text2:   #1E2E46;
+      --muted:   #5C718A;
+      --border:  #DDE5F0;
+      --shadow:  0 4px 24px rgba(10,34,68,0.09);
+      --shadow2: 0 10px 48px rgba(10,34,68,0.16);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Nunito',sans-serif; color:var(--text); background:var(--white); }
+    a { text-decoration:none; color:inherit; }
+
+    /* ── NAVBAR ── */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:200;
+      height:68px; padding:0 72px;
+      background:var(--white);
+      border-bottom:2px solid var(--border);
+      box-shadow:0 2px 12px rgba(10,34,68,0.07);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .nav-logo { font-size:1.45rem; font-weight:900; color:var(--navy); letter-spacing:-0.3px; }
+    .nav-logo .dot { color:var(--blue); }
+    .nav-logo .ai  { color:var(--gold); }
+    .nav-menu { display:flex; align-items:center; gap:4px; }
+    .nav-menu a { font-size:0.93rem; font-weight:700; color:var(--muted); padding:8px 15px; border-radius:8px; transition:all .2s; }
+    .nav-menu a:hover { color:var(--navy); background:var(--blue-pale); }
+    .nav-btn {
+      background:var(--navy) !important; color:var(--white) !important;
+      padding:10px 26px !important; border-radius:10px !important;
+      font-weight:800 !important; font-size:0.93rem !important;
+      box-shadow:0 3px 10px rgba(15,45,90,0.25) !important;
+      transition:background .2s, transform .15s !important;
+    }
+    .nav-btn:hover { background:var(--navy2) !important; transform:translateY(-1px) !important; }
+
+    /* ── HERO ── */
+    .hero {
+      padding:148px 72px 96px;
+      background:linear-gradient(155deg, var(--navy3) 0%, var(--navy) 55%, #1A4F9E 100%);
+      position:relative; overflow:hidden;
+    }
+    .hero-grid-bg {
+      position:absolute; inset:0; opacity:0.06;
+      background-image:
+        linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px);
+      background-size:40px 40px;
+    }
+    .hero-glow {
+      position:absolute; width:600px; height:600px;
+      border-radius:50%; background:radial-gradient(circle, rgba(30,111,217,0.35) 0%, transparent 70%);
+      right:-100px; top:-100px; pointer-events:none;
+    }
+    .hero-inner {
+      position:relative; z-index:1;
+      max-width:1100px; margin:0 auto;
+      display:grid; grid-template-columns:1fr 420px; gap:60px; align-items:center;
+    }
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(255,255,255,0.1); border:1.5px solid rgba(255,255,255,0.22);
+      color:var(--gold-lt); padding:8px 20px; border-radius:50px;
+      font-size:0.83rem; font-weight:800; letter-spacing:0.3px; margin-bottom:22px;
+    }
+    .hero h1 {
+      font-size:clamp(2rem,3.8vw,3rem); font-weight:900; color:var(--white);
+      line-height:1.18; margin-bottom:18px; letter-spacing:-0.4px;
+    }
+    .hero h1 .hl { color:var(--gold-lt); }
+    .hero-sub {
+      font-size:1.03rem; font-weight:600; color:rgba(255,255,255,0.75);
+      line-height:1.75; max-width:500px; margin-bottom:36px;
+    }
+    .hero-actions { display:flex; gap:14px; flex-wrap:wrap; }
+    .btn-gold {
+      background:var(--gold); color:var(--navy3); padding:14px 34px;
+      border-radius:10px; font-weight:900; font-size:1rem;
+      box-shadow:0 4px 18px rgba(245,166,35,0.4); transition:all .2s;
+    }
+    .btn-gold:hover { background:var(--gold-lt); transform:translateY(-2px); box-shadow:0 8px 28px rgba(245,166,35,0.5); }
+    .btn-ghost-w {
+      background:rgba(255,255,255,0.08); color:var(--white);
+      padding:14px 34px; border-radius:10px; font-weight:800; font-size:1rem;
+      border:2px solid rgba(255,255,255,0.35); transition:all .2s;
+    }
+    .btn-ghost-w:hover { background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.6); }
+
+    /* hero right — preview card */
+    .hero-card-stack { position:relative; }
+    .hero-card {
+      background:rgba(255,255,255,0.07); backdrop-filter:blur(12px);
+      border:1.5px solid rgba(255,255,255,0.18); border-radius:18px;
+      padding:20px 22px; margin-bottom:14px; display:flex; align-items:center; gap:14px;
+      transition:transform .2s;
+    }
+    .hero-card:hover { transform:translateX(4px); }
+    .hc-icon { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
+    .hci-b { background:rgba(78,148,255,0.25); }
+    .hci-g { background:rgba(245,166,35,0.22); }
+    .hci-p { background:rgba(160,110,255,0.22); }
+    .hc-info h4 { font-size:0.9rem; font-weight:800; color:var(--white); margin-bottom:3px; }
+    .hc-info p  { font-size:0.78rem; font-weight:600; color:rgba(255,255,255,0.6); }
+    .hc-badge { margin-left:auto; background:rgba(255,255,255,0.15); color:var(--gold-lt); font-size:0.7rem; font-weight:900; padding:4px 10px; border-radius:20px; white-space:nowrap; border:1px solid rgba(255,255,255,0.2); }
+
+    /* hero stats */
+    .hero-stats {
+      margin-top:60px; padding-top:44px;
+      border-top:1px solid rgba(255,255,255,0.12);
+      display:flex; gap:0; max-width:1100px; margin:60px auto 0;
+    }
+    .h-stat { flex:1; text-align:center; padding:0 24px; border-right:1px solid rgba(255,255,255,0.12); position:relative; z-index:1; }
+    .h-stat:last-child { border-right:none; }
+    .h-stat-val { font-size:2.2rem; font-weight:900; color:var(--gold-lt); margin-bottom:4px; }
+    .h-stat-lbl { font-size:0.82rem; color:rgba(255,255,255,0.6); font-weight:700; }
+
+    /* ── TRUST BAR ── */
+    .trust {
+      background:var(--off); border-top:2px solid var(--border); border-bottom:2px solid var(--border);
+      padding:18px 72px;
+      display:flex; align-items:center; justify-content:center; gap:44px; flex-wrap:wrap;
+    }
+    .trust-item { display:flex; align-items:center; gap:8px; font-size:0.87rem; font-weight:700; color:var(--muted); }
+    .trust-item span { font-size:1rem; }
+
+    /* ── SECTIONS ── */
+    .section { padding:88px 72px; max-width:1200px; margin:0 auto; }
+    .section-alt { background:var(--off); }
+    .section-alt-inner { max-width:1200px; margin:0 auto; padding:88px 72px; }
+    .sec-tag { display:inline-block; background:var(--blue-pale); color:var(--blue); border:1.5px solid var(--blue-mid); font-size:0.75rem; font-weight:900; letter-spacing:1.8px; text-transform:uppercase; padding:6px 16px; border-radius:50px; margin-bottom:12px; }
+    .sec-title { font-size:clamp(1.55rem,2.5vw,2.1rem); font-weight:900; color:var(--text); margin-bottom:10px; letter-spacing:-0.2px; }
+    .sec-sub { font-size:0.97rem; color:var(--muted); font-weight:600; max-width:500px; line-height:1.75; }
+    .tc { text-align:center; }
+    .tc .sec-sub { margin:0 auto; }
+
+    /* ── PLANNER CARDS ── */
+    .cards3 { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:48px; }
+    .pcard {
+      background:var(--white); border-radius:20px; border:2px solid var(--border);
+      box-shadow:var(--shadow); overflow:hidden; transition:all .25s;
+    }
+    .pcard:hover { transform:translateY(-7px); box-shadow:var(--shadow2); border-color:var(--blue-lt); }
+    .pcard-top { height:112px; display:flex; align-items:center; justify-content:center; font-size:3.2rem; }
+    .pt-blue   { background:linear-gradient(135deg,#DBEAFE,#BFDBFE); }
+    .pt-gold   { background:linear-gradient(135deg,#FEF3C7,#FDE68A); }
+    .pt-indigo { background:linear-gradient(135deg,#E0E7FF,#C7D2FE); }
+    .pcard-body { padding:22px 24px; }
+    .pcard-body h3 { font-size:1rem; font-weight:900; color:var(--text); margin-bottom:8px; }
+    .pcard-body p  { font-size:0.85rem; color:var(--muted); font-weight:600; line-height:1.65; margin-bottom:14px; }
+    .ptags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+    .ptag { font-size:0.72rem; font-weight:800; padding:3px 11px; border-radius:20px; background:var(--blue-pale); color:var(--blue); border:1.5px solid var(--blue-mid); }
+    .plink { display:inline-flex; align-items:center; gap:5px; color:var(--navy); font-weight:800; font-size:0.88rem; transition:all .2s; }
+    .plink:hover { color:var(--blue); gap:9px; }
+
+    /* ── STEPS ── */
+    .steps4 { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:48px; }
+    .step-box {
+      background:var(--white); border-radius:16px; padding:28px 22px;
+      text-align:center; border:2px solid var(--border); box-shadow:var(--shadow);
+      transition:border-color .2s, transform .2s;
+    }
+    .step-box:hover { border-color:var(--navy); transform:translateY(-3px); }
+    .step-num { width:52px; height:52px; border-radius:50%; background:var(--navy); color:var(--white); font-size:1.2rem; font-weight:900; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; box-shadow:0 4px 12px rgba(15,45,90,0.28); }
+    .step-box h4 { font-size:0.93rem; font-weight:900; margin-bottom:6px; color:var(--text); }
+    .step-box p  { font-size:0.82rem; color:var(--muted); font-weight:600; line-height:1.55; }
+
+    /* ── TESTIMONIALS ── */
+    .reviews3 { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:48px; }
+    .rcard {
+      background:var(--white); border-radius:18px; padding:26px;
+      border:2px solid var(--border); box-shadow:var(--shadow); transition:all .2s;
+    }
+    .rcard:hover { border-color:var(--navy); box-shadow:var(--shadow2); }
+    .rstars { color:var(--gold); font-size:1rem; letter-spacing:2px; margin-bottom:12px; }
+    .rtext { font-size:0.9rem; color:var(--text2); font-weight:600; line-height:1.75; margin-bottom:18px; font-style:italic; }
+    .rauthor { display:flex; align-items:center; gap:12px; }
+    .ravatar { width:42px; height:42px; border-radius:50%; background:var(--navy); color:var(--white); font-size:1rem; font-weight:900; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .rname { font-weight:800; font-size:0.88rem; color:var(--text); }
+    .rrole { font-size:0.78rem; color:var(--muted); font-weight:600; }
+
+    /* ── CTA ── */
+    .cta-section { padding:0 72px 88px; max-width:1200px; margin:0 auto; }
+    .cta-box {
+      background:linear-gradient(150deg,var(--navy3) 0%,var(--navy) 55%,#1A4F9E 100%);
+      border-radius:24px; padding:68px; text-align:center; position:relative; overflow:hidden;
+    }
+    .cta-box::before {
+      content:''; position:absolute; inset:0;
+      background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+      background-size:36px 36px;
+    }
+    .cta-box h2 { font-size:2rem; font-weight:900; color:var(--white); margin-bottom:12px; position:relative; }
+    .cta-box p  { color:rgba(255,255,255,0.75); font-size:1rem; font-weight:600; margin-bottom:34px; position:relative; }
+    .cta-btns  { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; position:relative; }
+    .btn-white { background:var(--white); color:var(--navy); padding:14px 38px; border-radius:10px; font-weight:900; font-size:1rem; box-shadow:0 4px 18px rgba(0,0,0,0.18); transition:all .2s; }
+    .btn-white:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,0.22); }
+    .btn-ol-w { background:transparent; color:var(--white); padding:14px 38px; border-radius:10px; font-weight:800; font-size:1rem; border:2px solid rgba(255,255,255,0.45); transition:all .2s; }
+    .btn-ol-w:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.7); }
+
+    /* ── FOOTER ── */
+    footer { background:var(--navy3); padding:60px 72px 30px; color:rgba(255,255,255,0.5); }
+    .fgrid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:44px; margin-bottom:44px; }
+    .flogo { font-size:1.3rem; font-weight:900; color:var(--white); margin-bottom:10px; }
+    .flogo .dot { color:var(--blue-lt); }
+    .flogo .ai  { color:var(--gold); }
+    .fdesc { font-size:0.86rem; font-weight:600; line-height:1.75; }
+    .fcol h4 { color:var(--white); font-weight:800; font-size:0.9rem; margin-bottom:14px; }
+    .fcol a  { display:block; font-size:0.85rem; font-weight:600; margin-bottom:8px; transition:color .2s; }
+    .fcol a:hover { color:var(--blue-lt); }
+    .fbot { border-top:1px solid rgba(255,255,255,0.08); padding-top:22px; display:flex; justify-content:space-between; font-size:0.82rem; font-weight:600; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1024px){
+      nav,.trust,.section,.section-alt-inner,.cta-section,footer{padding-left:28px;padding-right:28px;}
+      .hero{padding:130px 28px 80px;}
+      .hero-inner{grid-template-columns:1fr;} .hero-card-stack{display:none;}
+      .cards3,.steps4,.reviews3{grid-template-columns:1fr 1fr;}
+      .fgrid{grid-template-columns:1fr 1fr;}
+      .hero-stats{flex-wrap:wrap;}
+    }
+    @media(max-width:640px){
+      .cards3,.steps4,.reviews3{grid-template-columns:1fr;}
+      .nav-menu a:not(.nav-btn){display:none;}
+      .h-stat{border-right:none;padding:10px 0;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-logo">PocketSmart<span class="dot">.</span><span class="ai">AI</span></div>
+  <div class="nav-menu">
+    <a href="#features">Features</a>
+    <a href="#how-it-works">How it Works</a>
+    <a href="#reviews">Reviews</a>
+    <a href="/login">Sign In</a>
+    <a href="/register" class="nav-btn">Get Started Free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div style="padding-top:68px">
+<div class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">✦ Smart budget recommendations</div>
+      <h1>Budget Planning<br/>for Your Home,<br/><span class="hl">Events & Style</span></h1>
+      <p class="hero-sub">Plan home decor, events, and jewelry within your budget. Gemini can enhance suggestions when configured; built-in recommendations work offline too.</p>
+      <div class="hero-actions">
+        <a href="/register" class="btn-gold">Start Planning Free →</a>
+        <a href="/login" class="btn-ghost-w">Sign In</a>
+      </div>
+    </div>
+    <div class="hero-card-stack">
+      <div class="hero-card"><div class="hc-icon hci-b">🏠</div><div class="hc-info"><h4>Home Interior Planner</h4><p>₹50,000 · 3 rooms · Modern</p></div><div class="hc-badge">✓ Active</div></div>
+      <div class="hero-card"><div class="hc-icon hci-g">🎉</div><div class="hc-info"><h4>Party Budget Planner</h4><p>Birthday · 50 guests · ₹25,000</p></div><div class="hc-badge">✓ Active</div></div>
+      <div class="hero-card"><div class="hc-icon hci-p">💍</div><div class="hc-info"><h4>Jewelry Planner</h4><p>Wedding · ₹10,000 budget</p></div><div class="hc-badge">✓ Active</div></div>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="h-stat"><div class="h-stat-val">3</div><div class="h-stat-lbl">Planner Modules</div></div>
+    <div class="h-stat"><div class="h-stat-val">10+</div><div class="h-stat-lbl">Platforms Covered</div></div>
+    <div class="h-stat"><div class="h-stat-val">2</div><div class="h-stat-lbl">Recommendation modes</div></div>
+    <div class="h-stat"><div class="h-stat-val">Free</div><div class="h-stat-lbl">To Get Started</div></div>
+  </div>
+</div>
+
+<!-- TRUST BAR -->
+<div class="trust">
+  <div class="trust-item"><span>✅</span> Completely Free</div>
+  <div class="trust-item"><span>🤖</span> Gemini optional · offline mode ready</div>
+  <div class="trust-item"><span>🛒</span> Amazon · Flipkart · IKEA</div>
+  <div class="trust-item"><span>🍕</span> Swiggy · Zomato · OYO</div>
+  <div class="trust-item"><span>📱</span> Works on All Devices</div>
+</div>
+
+<!-- PLANNERS -->
+<div class="section" id="features">
+  <div class="tc">
+    <div class="sec-tag">Our Smart Planners</div>
+    <h2 class="sec-title">Everything You Need to Budget Smarter</h2>
+    <p class="sec-sub">Three budget planners for major life expenses, tailored to your preferences</p>
+  </div>
+  <div class="cards3">
+    <div class="pcard">
+      <div class="pcard-top pt-blue">🏠</div>
+      <div class="pcard-body">
+        <h3>Home Interior Budget Planner</h3>
+        <p>Tell us your rooms, budget and style. Get curated furniture, lighting and decor picks within your price range from top platforms.</p>
+        <div class="ptags"><span class="ptag">Amazon</span><span class="ptag">Flipkart</span><span class="ptag">IKEA</span></div>
+        <a href="/register" class="plink">Start Planning →</a>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-top pt-gold">🎉</div>
+      <div class="pcard-body">
+        <h3>Party Budget Planner</h3>
+        <p>Input budget, guest count and event type. AI splits costs perfectly across food, decoration, entertainment and venue.</p>
+        <div class="ptags"><span class="ptag">Swiggy</span><span class="ptag">Zomato</span><span class="ptag">OYO</span><span class="ptag">Amazon</span></div>
+        <a href="/register" class="plink">Plan My Event →</a>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-top pt-indigo">💍</div>
+      <div class="pcard-body">
+        <h3>Jewelry Budget Planner</h3>
+        <p>Enter your budget and occasion. Upload an outfit photo for AI color-matched jewelry suggestions that complement your look.</p>
+        <div class="ptags"><span class="ptag">Amazon</span><span class="ptag">Flipkart</span><span class="ptag">All Occasions</span></div>
+        <a href="/register" class="plink">Find Jewelry →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section-alt" id="how-it-works">
+  <div class="section-alt-inner">
+    <div class="tc">
+      <div class="sec-tag">Simple Process</div>
+      <h2 class="sec-title">How PocketSmart AI Works</h2>
+      <p class="sec-sub">Get personalized recommendations in four simple steps</p>
+    </div>
+    <div class="steps4">
+      <div class="step-box"><div class="step-num">1</div><h4>Create Free Account</h4><p>Sign up in seconds — no credit card or payment needed</p></div>
+      <div class="step-box"><div class="step-num">2</div><h4>Choose Your Planner</h4><p>Pick from Home, Party or Jewelry budget planner</p></div>
+      <div class="step-box"><div class="step-num">3</div><h4>Set Your Budget</h4><p>Enter your budget, preferences and specific requirements</p></div>
+      <div class="step-box"><div class="step-num">4</div><h4>Get AI Picks</h4><p>Receive curated product picks with direct shopping links</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEWS -->
+<div class="section" id="reviews">
+  <div class="tc">
+    <div class="sec-tag">What Users Say</div>
+    <h2 class="sec-title">Trusted by Smart Shoppers</h2>
+    <p class="sec-sub">Real experiences from people who transformed their budget planning</p>
+  </div>
+  <div class="reviews3">
+    <div class="rcard">
+      <div class="rstars">★★★★★</div>
+      <p class="rtext">"Furnished my entire living room within ₹40,000! Amazon and IKEA recommendations were spot on. Saved hours of research."</p>
+      <div class="rauthor"><div class="ravatar">P</div><div><div class="rname">Priya Sharma</div><div class="rrole">Homeowner · Bangalore</div></div></div>
+    </div>
+    <div class="rcard">
+      <div class="rstars">★★★★★</div>
+      <p class="rtext">"Planned my sister's wedding for 80 guests within budget. The AI budget split for catering and decor was absolutely perfect!"</p>
+      <div class="rauthor"><div class="ravatar">R</div><div><div class="rname">Rahul Mehta</div><div class="rrole">Event Planner · Mumbai</div></div></div>
+    </div>
+    <div class="rcard">
+      <div class="rstars">★★★★★</div>
+      <p class="rtext">"Uploaded my saree photo and got perfectly matched earrings within ₹5,000. The jewelry planner is absolutely genius!"</p>
+      <div class="rauthor"><div class="ravatar">A</div><div><div class="rname">Ananya Krishnan</div><div class="rrole">Fashion Blogger · Chennai</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-box">
+    <h2>Ready to Optimize Your Budget?</h2>
+    <p>Let PocketSmart AI make smarter financial decisions across all areas of your life</p>
+    <div class="cta-btns">
+      <a href="/register" class="btn-white">Create Free Account</a>
+      <a href="/login" class="btn-ol-w">Sign In</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fgrid">
+    <div>
+      <div class="flogo">PocketSmart<span class="dot">.</span><span class="ai">AI</span></div>
+      <p class="fdesc">Your budget planning assistant for home, events, and jewelry, with Gemini enhancement when configured and a built-in offline mode.</p>
+    </div>
+    <div class="fcol"><h4>Planners</h4><a href="/home-planner">Home Interior</a><a href="/party-planner">Party Budget</a><a href="/jewelry-planner">Jewelry Finder</a></div>
+    <div class="fcol"><h4>Account</h4><a href="/login">Sign In</a><a href="/register">Register Free</a><a href="/dashboard">Dashboard</a><a href="/history">History</a></div>
+    <div class="fcol"><h4>Platforms</h4><a href="#">Amazon India</a><a href="#">Flipkart</a><a href="#">IKEA India</a><a href="#">Swiggy / Zomato</a></div>
+  </div>
+  <div class="fbot"><span>© 2026 PocketSmart AI. All rights reserved.</span><span>Gemini optional · offline recommendations available</span></div>
+</footer>
+</div>
+</body>
+</html>

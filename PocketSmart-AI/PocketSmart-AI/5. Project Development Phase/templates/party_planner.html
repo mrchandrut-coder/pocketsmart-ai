@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PocketSmart AI – Party Budget Planner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--navy:#0F2D5A;--navy2:#0A2244;--navy3:#071A35;--blue:#1E6FD9;--blue-lt:#4189E8;--blue-pale:#EEF4FE;--blue-mid:#CCDCFB;--gold:#F5A623;--gold-lt:#FFD07A;--white:#FFFFFF;--off:#F7F9FC;--text:#0A1628;--text2:#1E2E46;--muted:#5C718A;--border:#DDE5F0;--shadow:0 4px 20px rgba(10,34,68,0.08);--shadow2:0 8px 36px rgba(10,34,68,0.14);}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--off);min-height:100vh;}
+    a{text-decoration:none;color:inherit;}
+    nav{background:var(--white);border-bottom:2px solid var(--border);height:64px;padding:0 44px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(10,34,68,0.07);}
+    .nav-logo{font-size:1.3rem;font-weight:900;color:var(--navy);}
+    .nav-logo .dot{color:var(--blue);}
+    .nav-logo .ai{color:var(--gold);}
+    .nav-right{display:flex;align-items:center;gap:4px;}
+    .nl{padding:7px 13px;border-radius:8px;font-size:0.85rem;font-weight:800;color:var(--muted);transition:all .2s;}
+    .nl:hover{background:var(--blue-pale);color:var(--navy);}
+    .nl.active{background:var(--blue-pale);color:var(--navy);}
+    .nl.danger{color:#B91C1C;}
+    .nl.danger:hover{background:#FEF2F2;}
+    .user-chip{background:var(--navy);color:var(--white);padding:8px 16px;border-radius:8px;font-size:0.85rem;font-weight:800;}
+    .page-header{background:linear-gradient(150deg,var(--navy3) 0%,var(--navy) 55%,#1A4F9E 100%);padding:40px 44px;position:relative;overflow:hidden;}
+    .page-header::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:36px 36px;}
+    .ph-glow{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(30,111,217,0.4) 0%,transparent 70%);right:-40px;top:-80px;pointer-events:none;}
+    .ph-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1;display:flex;align-items:center;gap:16px;}
+    .ph-icon{width:58px;height:58px;border-radius:16px;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;}
+    .ph-text h1{font-size:1.6rem;font-weight:900;color:var(--white);margin-bottom:4px;}
+    .ph-text p{font-size:0.92rem;font-weight:600;color:rgba(255,255,255,0.72);}
+    main{max-width:1100px;margin:0 auto;padding:32px 44px;}
+    .layout{display:grid;grid-template-columns:370px 1fr;gap:28px;align-items:start;}
+
+    /* FORM */
+    .form-card{background:var(--white);border:2px solid var(--border);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;position:sticky;top:84px;}
+    .fch{background:var(--blue-pale);border-bottom:2px solid var(--blue-mid);padding:16px 22px;display:flex;align-items:center;gap:10px;}
+    .fch h2{font-size:0.97rem;font-weight:900;color:var(--navy);}
+    .fch .sec-icon{font-size:1rem;}
+    .form-body{padding:20px 22px;}
+    .fsec{background:var(--off);border:2px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;}
+    .fsec-title{display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:900;color:var(--navy);margin-bottom:14px;}
+    .fsec-title span{font-size:1rem;}
+    .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+    .frow:last-child{margin-bottom:0;}
+    .fgroup{display:flex;flex-direction:column;gap:5px;}
+    .fgroup.full{grid-column:1/-1;}
+    label{font-size:0.8rem;font-weight:800;color:var(--text2);}
+    input,select,textarea{width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:9px;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:600;color:var(--text);background:var(--white);transition:border-color .2s,box-shadow .2s;}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(30,111,217,0.1);}
+    input::placeholder,textarea::placeholder{color:#9EB0C8;font-weight:600;}
+    select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235C718A' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+    textarea{resize:vertical;min-height:72px;}
+    .needs-grid{display:flex;flex-wrap:wrap;gap:8px;}
+    .need-item{display:flex;align-items:center;gap:7px;background:var(--white);border:2px solid var(--border);border-radius:30px;padding:7px 14px;cursor:pointer;transition:all .2s;user-select:none;}
+    .need-item:hover{border-color:var(--blue-mid);}
+    .need-item input[type=checkbox]{width:14px;height:14px;accent-color:var(--navy);cursor:pointer;padding:0;flex-shrink:0;}
+    .need-item label{font-size:0.8rem;font-weight:700;color:var(--text2);cursor:pointer;margin:0;}
+    .need-item .ni{font-size:0.95rem;}
+    .btn-gen{width:100%;padding:13px;background:var(--navy);color:var(--white);border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:0.97rem;font-weight:900;cursor:pointer;box-shadow:0 4px 16px rgba(15,45,90,0.28);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;}
+    .btn-gen:hover{background:var(--navy2);transform:translateY(-1px);}
+    .btn-gen:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
+
+    /* STATES */
+    .res-empty{background:var(--white);border:2px dashed var(--border);border-radius:20px;padding:56px 28px;text-align:center;}
+    .re-icon{font-size:3rem;margin-bottom:12px;opacity:0.3;}
+    .re-title{font-size:1.05rem;font-weight:900;color:var(--text);margin-bottom:6px;}
+    .re-sub{font-size:0.86rem;font-weight:600;color:var(--muted);line-height:1.6;}
+    .loading{display:none;background:var(--white);border:2px solid var(--border);border-radius:20px;padding:56px 28px;text-align:center;}
+    .spinner{width:44px;height:44px;border:4px solid var(--blue-mid);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .loading p{font-size:0.92rem;font-weight:700;color:var(--muted);}
+
+    /* RESULT */
+    .result-wrap{display:none;}
+    .res-topbar{background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);border-radius:16px;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .res-topbar h2{font-size:1rem;font-weight:900;color:var(--white);}
+    .res-topbar p{font-size:0.78rem;color:rgba(255,255,255,0.7);font-weight:600;margin-top:3px;}
+    .res-topbar-right{display:flex;align-items:center;gap:10px;}
+    .res-badge{background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.25);color:var(--gold-lt);padding:5px 13px;border-radius:20px;font-size:0.74rem;font-weight:800;white-space:nowrap;}
+    .print-btn{background:white;color:var(--navy);border:none;padding:7px 14px;border-radius:8px;font-family:'Nunito',sans-serif;font-size:0.78rem;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:5px;transition:opacity .2s;}
+    .print-btn:hover{opacity:0.85;}
+
+    /* Budget total line */
+    .budget-line{background:var(--white);border:2px solid var(--border);border-radius:12px;padding:12px 18px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
+    .bl-label{font-size:0.88rem;font-weight:800;color:var(--navy);}
+    .bl-val{font-size:1.1rem;font-weight:900;color:var(--blue);}
+
+    /* Category section */
+    .cat-section{background:var(--white);border:2px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow);}
+    .cat-head{padding:11px 16px;display:flex;align-items:center;gap:10px;background:var(--blue-pale);border-bottom:2px solid var(--blue-mid);}
+    .cat-icon{font-size:1rem;width:28px;height:28px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;}
+    .cat-name{font-size:0.92rem;font-weight:900;color:var(--navy);flex:1;}
+    .cat-alloc{font-size:0.88rem;font-weight:900;color:var(--blue);}
+    .cat-items{padding:0;}
+    .cat-item{padding:12px 16px;border-bottom:1px solid var(--border);}
+    .cat-item:last-child{border-bottom:none;}
+    .ci-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;}
+    .ci-name{font-size:0.9rem;font-weight:800;color:var(--navy);}
+    .ci-price{font-size:0.9rem;font-weight:900;color:var(--blue);white-space:nowrap;margin-left:10px;}
+    .ci-desc{font-size:0.81rem;color:var(--muted);font-weight:600;margin-bottom:7px;line-height:1.45;}
+    .shop-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+    .shop-lbl{font-size:0.74rem;font-weight:800;color:var(--muted);}
+    .sbtn{display:inline-flex;align-items:center;gap:3px;font-size:0.7rem;font-weight:800;padding:3px 9px;border-radius:6px;border:1.5px solid;transition:all .15s;white-space:nowrap;}
+    .s-amazon{background:#FFF8E7;color:#B45309;border-color:#FDE68A;}
+    .s-amazon:hover{background:#FDE68A;}
+    .s-flipkart{background:#EEF4FE;color:#1D4ED8;border-color:#BFDBFE;}
+    .s-flipkart:hover{background:#BFDBFE;}
+    .s-swiggy{background:#FFF7ED;color:#C2410C;border-color:#FED7AA;}
+    .s-swiggy:hover{background:#FED7AA;}
+    .s-zomato{background:#FEF2F2;color:#B91C1C;border-color:#FECACA;}
+    .s-zomato:hover{background:#FECACA;}
+    .s-oyo{background:#F0FDF4;color:#166534;border-color:#BBF7D0;}
+    .s-oyo:hover{background:#BBF7D0;}
+    .s-booking{background:#EEF4FE;color:#1E3A8A;border-color:#BFDBFE;}
+    .s-other{background:var(--off);color:var(--muted);border-color:var(--border);}
+
+    /* Budget summary footer */
+    .bsum-footer{background:var(--white);border:2px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:10px;box-shadow:var(--shadow);}
+    .bsf-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);}
+    .bsf-row:last-child{border-bottom:none;padding-top:8px;}
+    .bsf-label{font-size:0.86rem;font-weight:700;color:var(--muted);}
+    .bsf-val{font-size:0.9rem;font-weight:900;color:var(--navy);}
+    .bsf-row.total .bsf-label{font-weight:900;color:var(--navy);font-size:0.9rem;}
+    .bsf-row.total .bsf-val{color:var(--blue);font-size:1rem;}
+    .bsf-row.remaining .bsf-val{color:#15803D;}
+
+    /* Venue suggestions */
+    .venue-card{background:var(--white);border:2px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow);}
+    .vc-head{padding:11px 16px;background:var(--blue-pale);border-bottom:2px solid var(--blue-mid);display:flex;align-items:center;gap:8px;}
+    .vc-head span{font-size:1rem;}
+    .vc-head h3{font-size:0.92rem;font-weight:900;color:var(--navy);}
+    .vc-body{padding:14px 16px;}
+    .venue-item{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);}
+    .venue-item:last-child{border-bottom:none;}
+    .vi-name{font-size:0.88rem;font-weight:800;color:var(--navy);}
+    .vi-price{font-size:0.88rem;font-weight:900;color:var(--blue);}
+    .vi-meta{font-size:0.78rem;color:var(--muted);font-weight:600;margin-top:3px;}
+    .vi-links{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;}
+
+    /* Tips */
+    .tips-card{background:var(--white);border:2px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow);display:none;}
+    .tips-head{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);padding:11px 16px;display:flex;align-items:center;gap:8px;}
+    .tips-head span{font-size:1rem;}
+    .tips-head h3{font-size:0.92rem;font-weight:900;color:var(--white);}
+    .tips-body{padding:12px 16px;}
+    .tip-row{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);}
+    .tip-row:last-child{border-bottom:none;padding-bottom:0;}
+    .tip-dot{width:18px;height:18px;border-radius:50%;background:var(--blue-pale);border:2px solid var(--blue-mid);display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:var(--blue);font-weight:900;flex-shrink:0;margin-top:2px;}
+    .tip-txt{font-size:0.84rem;font-weight:600;color:var(--text2);line-height:1.5;}
+
+    .res-actions{display:flex;gap:10px;margin-top:4px;}
+    .btn-new{background:var(--navy);color:var(--white);padding:10px 22px;border-radius:10px;font-weight:800;font-size:0.86rem;border:none;cursor:pointer;font-family:'Nunito',sans-serif;transition:background .2s;}
+    .btn-new:hover{background:var(--navy2);}
+    .btn-copy{background:var(--white);color:var(--text2);padding:10px 22px;border-radius:10px;font-weight:800;font-size:0.86rem;border:2px solid var(--border);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s;}
+    .btn-copy:hover{border-color:var(--navy);color:var(--navy);}
+
+    @media(max-width:900px){nav{height:auto;min-height:64px;padding:8px 16px;flex-wrap:wrap;row-gap:8px;}.nav-right{flex:1 1 200px;flex-wrap:wrap;justify-content:flex-end;gap:2px;}main{padding:20px 16px;}.layout{grid-template-columns:1fr;}.form-card{position:static;}.page-header{padding:28px 20px;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">PocketSmart<span class="dot">.</span><span class="ai">AI</span></div>
+  <div class="nav-right">
+    <a href="/dashboard" class="nl">Dashboard</a>
+    <a href="/home-planner" class="nl">🏠 Home</a>
+    <a href="/party-planner" class="nl active">🎉 Party</a>
+    <a href="/jewelry-planner" class="nl">💍 Jewelry</a>
+    <a href="/history" class="nl">📜 History</a>
+    <span class="user-chip" id="userChip">👤 User</span>
+    <a href="/logout" class="nl danger">Logout</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="ph-glow"></div>
+  <div class="ph-inner">
+    <div class="ph-icon">🎉</div>
+    <div class="ph-text">
+      <h1>Party Budget Planner</h1>
+      <p>Build an event plan around your budget, guest count, and priorities</p>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="layout">
+
+    <!-- FORM -->
+    <div class="form-card">
+      <div class="fch"><span class="sec-icon">📋</span><h2>Event Details</h2></div>
+      <div class="form-body">
+
+        <div class="fsec">
+          <div class="fsec-title"><span>🔵</span> Basic Information</div>
+          <div class="frow">
+            <div class="fgroup"><label>Total Budget (₹) *</label><input type="number" id="budget" placeholder="e.g. 30000" min="500"/></div>
+            <div class="fgroup"><label>Number of Guests *</label><input type="number" id="guests" placeholder="e.g. 50" min="1"/></div>
+          </div>
+        </div>
+
+        <div class="fsec">
+          <div class="fsec-title"><span>🎈</span> Event Details</div>
+          <div class="frow">
+            <div class="fgroup">
+              <label>Party Type *</label>
+              <select id="eventType">
+                <option value="">Select type</option>
+                <option>Birthday Party</option>
+                <option>Wedding Reception</option>
+                <option>Engagement Ceremony</option>
+                <option>Anniversary Celebration</option>
+                <option>Baby Shower</option>
+                <option>House Warming</option>
+                <option>Corporate Event</option>
+                <option>Festival Celebration</option>
+                <option>Graduation Party</option>
+              </select>
+            </div>
+            <div class="fgroup">
+              <label>Venue Type</label>
+              <select id="location">
+                <option value="">Select venue</option>
+                <option>Home</option>
+                <option>Banquet Hall</option>
+                <option>Hotel</option>
+                <option>Outdoor / Garden</option>
+                <option>Restaurant</option>
+                <option>OYO / Resort</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="fsec">
+          <div class="fsec-title"><span>🟡</span> Party Needs</div>
+          <div class="needs-grid">
+            <div class="need-item"><span class="ni">🍽️</span><input type="checkbox" id="n_food" value="Catering" checked/><label for="n_food">Catering</label></div>
+            <div class="need-item"><span class="ni">🎀</span><input type="checkbox" id="n_decor" value="Decoration" checked/><label for="n_decor">Decoration</label></div>
+            <div class="need-item"><span class="ni">🎵</span><input type="checkbox" id="n_ent" value="Entertainment"/><label for="n_ent">Entertainment</label></div>
+            <div class="need-item"><span class="ni">🎂</span><input type="checkbox" id="n_cake" value="Cake & Sweets"/><label for="n_cake">Cake</label></div>
+            <div class="need-item"><span class="ni">📸</span><input type="checkbox" id="n_photo" value="Photography"/><label for="n_photo">Photography</label></div>
+            <div class="need-item"><span class="ni">🎁</span><input type="checkbox" id="n_gifts" value="Return Gifts"/><label for="n_gifts">Gifts</label></div>
+          </div>
+        </div>
+
+        <div class="fsec">
+          <div class="fsec-title"><span>🔷</span> Additional Requirements</div>
+          <div class="frow">
+            <div class="fgroup full">
+              <label>Food Preference</label>
+              <select id="foodPref">
+                <option value="">Select preference</option>
+                <option>Vegetarian Only</option>
+                <option>Non-Vegetarian</option>
+                <option>Both Veg & Non-Veg</option>
+              </select>
+            </div>
+          </div>
+          <div class="frow">
+            <div class="fgroup full">
+              <label>Special Requests</label>
+              <textarea id="notes" placeholder="Special requests, themes, dietary restrictions, etc."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-gen" id="genBtn" onclick="generate()">🎉 Generate Budget Plan</button>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel">
+      <div class="res-empty" id="emptyState">
+        <div class="re-icon">🎉</div>
+        <div class="re-title">Your Party Budget Plan Will Appear Here</div>
+        <p class="re-sub">Fill in your event details on the left and click Generate to get a complete AI budget breakdown with venue suggestions and shopping links.</p>
+      </div>
+      <div class="loading" id="loadingState">
+        <div class="spinner"></div>
+        <p>Creating your personalized party budget plan...</p>
+      </div>
+      <div class="result-wrap" id="resultWrap">
+
+        <div class="res-topbar">
+          <div><h2>🎉 Your Party Budget Plan</h2><p id="resMeta">Party</p></div>
+          <div class="res-topbar-right">
+            <button class="print-btn" onclick="window.print()">🖨️ Print/Save</button>
+            <div class="res-badge" id="resultSource">Budget recommendation</div>
+          </div>
+        </div>
+
+        <div class="budget-line">
+          <span class="bl-label">💰 Budget:</span>
+          <span class="bl-val" id="blVal">—</span>
+        </div>
+
+        <div id="catSections"></div>
+
+        <div class="bsum-footer" id="bsumFooter">
+          <div class="bsf-row total"><span class="bsf-label">Total Budget</span><span class="bsf-val" id="bsfTotal">—</span></div>
+          <div class="bsf-row"><span class="bsf-label">Allocated</span><span class="bsf-val" id="bsfAlloc">—</span></div>
+          <div class="bsf-row remaining"><span class="bsf-label">Remaining</span><span class="bsf-val" id="bsfRemain">—</span></div>
+        </div>
+
+        <div class="venue-card" id="venueCard" style="display:none">
+          <div class="vc-head"><span>📍</span><h3>Venue Suggestions</h3></div>
+          <div class="vc-body" id="venueBody"></div>
+        </div>
+
+        <div class="tips-card" id="tipsCard">
+          <div class="tips-head"><span>💡</span><h3>Additional Suggestions</h3></div>
+          <div class="tips-body" id="tipsBody"></div>
+        </div>
+
+        <div class="res-actions">
+          <button class="btn-new" onclick="resetForm()">+ New Plan</button>
+          <button class="btn-copy" id="copyBtn" onclick="copyResult()">📋 Copy All</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  document.getElementById('userChip').textContent = '👤 ' + (localStorage.getItem('username') || 'User');
+
+  function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  }
+
+  function getChecked(ids) { return ids.map(id => document.getElementById(id)).filter(c => c && c.checked).map(c => c.value); }
+  function fmt(n) { return '\u20b9' + Number(n).toLocaleString('en-IN'); }
+
+  const SHOP = {
+    'Swiggy':   { lbl: '\uD83D\uDECD Swiggy',   cls: 's-swiggy',   u: 'https://www.swiggy.com/search?query=' },
+    'Zomato':   { lbl: '\uD83C\uDF7D Zomato',   cls: 's-zomato',   u: 'https://www.zomato.com/search?q=' },
+    'Amazon':   { lbl: '\uD83D\uDECD Amazon',   cls: 's-amazon',   u: 'https://www.amazon.in/s?k=' },
+    'Flipkart': { lbl: '\uD83D\uDED2 Flipkart', cls: 's-flipkart', u: 'https://www.flipkart.com/search?q=' },
+    'OYO':      { lbl: '\uD83C\uDFE8 OYO',      cls: 's-oyo',      u: 'https://www.oyorooms.com/search?location=' },
+    'Booking':  { lbl: '\uD83C\uDFE8 Booking',  cls: 's-booking',  u: 'https://www.booking.com/searchresults.html?ss=' },
+  };
+
+  function shopBtns(name, platforms) {
+    const q = encodeURIComponent(name);
+    return platforms.map(p => {
+      const s = SHOP[p] || { lbl: p, cls: 's-other', u: '#' };
+      return `<a href="${s.u}${q}" target="_blank" rel="noopener noreferrer" class="sbtn ${escapeHTML(s.cls)}">${escapeHTML(s.lbl)}</a>`;
+    }).join('');
+  }
+
+  function renderResults(data, budget, platforms) {
+    const plat = platforms.length ? platforms : ['Swiggy', 'Zomato', 'Amazon', 'Flipkart'];
+    document.getElementById('blVal').textContent = fmt(budget);
+
+    const cats = data.categories || [];
+    const container = document.getElementById('catSections');
+    container.innerHTML = '';
+    let totalAlloc = 0;
+
+    cats.forEach(cat => {
+      totalAlloc += Number(cat.allocation) || 0;
+      const items = (cat.items || []).map(item => `
+        <div class="cat-item">
+          <div class="ci-top">
+            <span class="ci-name">${escapeHTML(item.name)}</span>
+            <span class="ci-price">${fmt(item.price)}</span>
+          </div>
+          <div class="ci-desc">${escapeHTML(item.description)}</div>
+          <div class="shop-row">
+            <span class="shop-lbl">Shop on:</span>
+            ${shopBtns(item.name, plat)}
+          </div>
+        </div>`).join('');
+
+      container.innerHTML += `
+        <div class="cat-section">
+          <div class="cat-head">
+            <span class="cat-icon">${escapeHTML(cat.icon || '📦')}</span>
+            <span class="cat-name">${escapeHTML(cat.name)}</span>
+            <span class="cat-alloc">${fmt(cat.allocation)}</span>
+          </div>
+          <div class="cat-items">${items}</div>
+        </div>`;
+    });
+
+    // Budget summary footer
+    document.getElementById('bsfTotal').textContent  = fmt(budget);
+    document.getElementById('bsfAlloc').textContent  = fmt(totalAlloc);
+    document.getElementById('bsfRemain').textContent = fmt(Math.max(0, budget - totalAlloc));
+
+    // Venue suggestions
+    if (data.venues && data.venues.length) {
+      document.getElementById('venueCard').style.display = 'block';
+      document.getElementById('venueBody').innerHTML = data.venues.map(v => `
+        <div class="venue-item">
+          <div>
+            <div class="vi-name">${escapeHTML(v.name)}</div>
+            <div class="vi-meta">${v.type ? '● Type: ' + escapeHTML(v.type) : ''} ${v.location ? '📍 ' + escapeHTML(v.location) : ''}</div>
+            <div class="vi-links">
+              ${shopBtns(v.name, ['OYO', 'Booking'])}
+            </div>
+          </div>
+          <div class="vi-price">${v.cost !== undefined ? fmt(v.cost) : ''}</div>
+        </div>`).join('');
+    }
+
+    // Tips
+    if (data.tips && data.tips.length) {
+      document.getElementById('tipsCard').style.display = 'block';
+      document.getElementById('tipsBody').innerHTML = data.tips.map(t =>
+        `<div class="tip-row"><div class="tip-dot">✓</div><div class="tip-txt">${escapeHTML(t)}</div></div>`
+      ).join('');
+    }
+  }
+
+  async function generate() {
+    const budget    = document.getElementById('budget').value;
+    const guests    = document.getElementById('guests').value;
+    const eventType = document.getElementById('eventType').value;
+    const location  = document.getElementById('location').value;
+    const foodPref  = document.getElementById('foodPref').value;
+    const notes     = document.getElementById('notes').value;
+    const needs     = getChecked(['n_food','n_decor','n_ent','n_cake','n_photo','n_gifts']);
+
+    if (!budget || !guests || !eventType) { alert('Please fill in Budget, Guests, and Party Type.'); return; }
+
+    document.getElementById('emptyState').style.display   = 'none';
+    document.getElementById('resultWrap').style.display   = 'none';
+    document.getElementById('loadingState').style.display = 'block';
+    document.getElementById('genBtn').disabled = true;
+    document.getElementById('venueCard').style.display    = 'none';
+    document.getElementById('tipsCard').style.display     = 'none';
+
+    try {
+      const res = await fetch('/generate-party', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ budget: parseInt(budget), event_type: eventType, guests, location, food_preference: foodPref, includes: needs, notes })
+      });
+      const raw = await res.json();
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('resultSource').textContent = raw.source === 'gemini' ? '✦ Gemini recommendation' : 'Offline recommendation';
+
+      const recText = raw.recommendations || raw.result || raw.response || '';
+      let parsed = null;
+      const jm = recText.match(/```json\s*([\s\S]*?)\s*```/) || recText.match(/(\{[\s\S]*"categories"[\s\S]*\})/);
+      if (jm) { try { parsed = JSON.parse(jm[1]); } catch(e){} }
+
+      document.getElementById('resMeta').textContent = `\u20b9${parseInt(budget).toLocaleString('en-IN')} \u00b7 ${eventType} \u00b7 ${guests} guests`;
+
+      if (parsed && parsed.categories) {
+        const plat = needs.includes('Catering') ? ['Swiggy','Zomato','Amazon','Flipkart'] : ['Amazon','Flipkart'];
+        renderResults(parsed, parseInt(budget), plat);
+      } else if (recText) {
+        document.getElementById('catSections').innerHTML = `<div style="background:white;border:2px solid var(--border);border-radius:14px;padding:20px;line-height:1.8;font-size:0.91rem;">${mdToHtml(recText)}</div>`;
+        document.getElementById('blVal').textContent = fmt(parseInt(budget));
+        document.getElementById('bsfTotal').textContent = fmt(parseInt(budget));
+        document.getElementById('bsfAlloc').textContent = '—';
+        document.getElementById('bsfRemain').textContent = '—';
+      } else {
+        alert('Error: ' + (typeof raw.detail === 'string' ? raw.detail : JSON.stringify(raw)));
+        document.getElementById('emptyState').style.display = 'block';
+        document.getElementById('genBtn').disabled = false;
+        return;
+      }
+      document.getElementById('resultWrap').style.display = 'block';
+    } catch(err) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('emptyState').style.display  = 'block';
+      alert('Connection error: ' + err.message);
+    }
+    document.getElementById('genBtn').disabled = false;
+  }
+
+  function mdToHtml(t) {
+    return escapeHTML(t)
+      .replace(/^### (.+)$/gm,'<h3 style="color:var(--navy);font-weight:900;margin:12px 0 6px">$1</h3>')
+      .replace(/^## (.+)$/gm,'<h2 style="color:var(--navy);font-weight:900;margin:14px 0 7px">$1</h2>')
+      .replace(/\*\*(.+?)\*\*/g,'<strong style="color:var(--navy)">$1</strong>')
+      .replace(/^- (.+)$/gm,'<li style="margin-bottom:4px">$1</li>')
+      .replace(/(<li[^>]*>.*<\/li>\n?)+/g,s=>`<ul style="padding-left:20px;margin:8px 0">${s}</ul>`)
+      .replace(/\n\n/g,'<br/><br/>');
+  }
+
+  function resetForm() {
+    document.getElementById('resultWrap').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('catSections').innerHTML    = '';
+    document.getElementById('tipsCard').style.display   = 'none';
+    document.getElementById('venueCard').style.display  = 'none';
+    ['budget','guests','eventType','location','foodPref','notes'].forEach(id => { const e = document.getElementById(id); if(e) e.value=''; });
+  }
+
+  function copyResult() {
+    const lines = [];
+    document.querySelectorAll('.cat-section').forEach(c => {
+      lines.push(c.querySelector('.cat-name').textContent + ' — ' + c.querySelector('.cat-alloc').textContent);
+      c.querySelectorAll('.cat-item').forEach(i => {
+        lines.push('  • ' + i.querySelector('.ci-name').textContent + ' — ' + i.querySelector('.ci-price').textContent);
+      });
+    });
+    document.querySelectorAll('.tip-txt').forEach(t => lines.push('💡 ' + t.textContent));
+    navigator.clipboard.writeText(lines.join('\n')).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => btn.textContent = '📋 Copy All', 2000);
+    });
+  }
+</script>
+</body>
+</html>

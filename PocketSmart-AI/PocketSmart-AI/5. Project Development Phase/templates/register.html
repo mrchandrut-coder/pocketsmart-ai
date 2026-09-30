@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PocketSmart AI – Create Account</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--navy:#0F2D5A;--navy2:#0A2244;--navy3:#071A35;--blue:#1E6FD9;--blue-lt:#4189E8;--blue-pale:#EEF4FE;--blue-mid:#CCDCFB;--gold:#F5A623;--gold-lt:#FFD07A;--white:#FFFFFF;--off:#F7F9FC;--text:#0A1628;--text2:#1E2E46;--muted:#5C718A;--border:#DDE5F0;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Nunito',sans-serif;color:var(--text);min-height:100vh;display:flex;background:var(--off);}
+    a{text-decoration:none;color:inherit;}
+
+    .left{width:46%;background:var(--white);border-right:2px solid var(--border);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 56px;overflow-y:auto;}
+    .left-wrap{width:100%;max-width:380px;}
+    .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:0.86rem;font-weight:700;margin-bottom:28px;transition:color .2s;}
+    .back-link:hover{color:var(--navy);}
+    .brand{font-size:1.4rem;font-weight:900;color:var(--navy);margin-bottom:4px;}
+    .brand .dot{color:var(--blue);}
+    .brand .ai{color:var(--gold);}
+    .brand-tag{font-size:0.85rem;font-weight:700;color:var(--muted);margin-bottom:26px;}
+    .page-title{font-size:1.75rem;font-weight:900;color:var(--text);margin-bottom:6px;}
+    .page-sub{font-size:0.92rem;font-weight:600;color:var(--muted);margin-bottom:22px;line-height:1.6;}
+    .form-group{margin-bottom:15px;}
+    .form-group label{display:block;font-size:0.86rem;font-weight:800;color:var(--text2);margin-bottom:6px;}
+    .inp-wrap{position:relative;}
+    .inp-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;}
+    input{width:100%;padding:12px 14px 12px 44px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:600;color:var(--text);background:var(--off);transition:border-color .2s,box-shadow .2s,background .2s;}
+    input:focus{outline:none;border-color:var(--blue);background:var(--white);box-shadow:0 0 0 3px rgba(30,111,217,0.1);}
+    input::placeholder{color:#9EB0C8;font-weight:600;}
+    .btn-submit{width:100%;padding:13px;background:var(--navy);color:var(--white);border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(15,45,90,0.28);transition:all .2s;margin-top:4px;}
+    .btn-submit:hover{background:var(--navy2);transform:translateY(-1px);}
+    .btn-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
+    .msg{border-radius:10px;padding:10px 14px;font-size:0.88rem;font-weight:700;margin-bottom:14px;display:none;}
+    .msg-err{background:#FEF2F2;border:2px solid #FECACA;color:#B91C1C;}
+    .msg-ok{background:#F0FDF4;border:2px solid #BBF7D0;color:#15803D;}
+    .switch{text-align:center;margin-top:18px;color:var(--muted);font-size:0.9rem;font-weight:700;}
+    .switch a{color:var(--blue);font-weight:800;}
+
+    .right{flex:1;background:linear-gradient(155deg,var(--navy3) 0%,var(--navy) 55%,#1A4F9E 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:64px;position:relative;overflow:hidden;}
+    .right::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:36px 36px;}
+    .right-glow{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(30,111,217,0.4) 0%,transparent 70%);top:-100px;right:-80px;pointer-events:none;}
+    .right-inner{position:relative;z-index:1;max-width:360px;}
+    .right-inner h2{font-size:1.5rem;font-weight:900;color:var(--white);margin-bottom:8px;}
+    .right-inner p{font-size:0.92rem;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:28px;line-height:1.7;}
+    .benefits{display:flex;flex-direction:column;gap:12px;}
+    .benefit{background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.14);border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:12px;}
+    .bcheck{width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--navy3);font-size:0.75rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .benefit span{font-size:0.87rem;font-weight:700;color:rgba(255,255,255,0.88);}
+
+    @media(max-width:768px){.right{display:none;}.left{width:100%;padding:40px 24px;}}
+  </style>
+</head>
+<body>
+  <div class="left">
+    <div class="left-wrap">
+      <a href="/" class="back-link">← Back to Home</a>
+      <div class="brand">PocketSmart<span class="dot">.</span><span class="ai">AI</span></div>
+      <p class="brand-tag">Personalized Budget Planning</p>
+      <h1 class="page-title">Create Your Account</h1>
+      <p class="page-sub">Join PocketSmart AI and start planning smarter today</p>
+      <div class="msg msg-err" id="errMsg"></div>
+      <div class="msg msg-ok"  id="okMsg"></div>
+      <form id="regForm">
+        <div class="form-group"><label>Username *</label><div class="inp-wrap"><span class="inp-icon">👤</span><input type="text" id="username" placeholder="Choose a username" required/></div></div>
+        <div class="form-group"><label>Full Name</label><div class="inp-wrap"><span class="inp-icon">📛</span><input type="text" id="fullname" placeholder="Your full name"/></div></div>
+        <div class="form-group"><label>Email</label><div class="inp-wrap"><span class="inp-icon">📧</span><input type="email" id="email" placeholder="your@email.com"/></div></div>
+        <div class="form-group"><label>Password *</label><div class="inp-wrap"><span class="inp-icon">🔒</span><input type="password" id="password" placeholder="Create a strong password" required/></div></div>
+        <div class="form-group"><label>Confirm Password *</label><div class="inp-wrap"><span class="inp-icon">🔒</span><input type="password" id="confirm" placeholder="Confirm your password" required/></div></div>
+        <button type="submit" class="btn-submit" id="submitBtn">Create Account →</button>
+      </form>
+      <p class="switch">Already have an account? <a href="/login">Sign in here</a></p>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="right-glow"></div>
+    <div class="right-inner">
+      <h2>Why Join PocketSmart AI?</h2>
+      <p>Everything you need to manage budgets intelligently with the power of AI</p>
+      <div class="benefits">
+        <div class="benefit"><div class="bcheck">✓</div><span>Free to use — no credit card needed</span></div>
+        <div class="benefit"><div class="bcheck">✓</div><span>Gemini enhancement when configured; offline plans always available</span></div>
+        <div class="benefit"><div class="bcheck">✓</div><span>Home, Party & Jewelry planners included</span></div>
+        <div class="benefit"><div class="bcheck">✓</div><span>Budget tracking & recommendation history</span></div>
+        <div class="benefit"><div class="bcheck">✓</div><span>Amazon, Flipkart, IKEA, Swiggy & more</span></div>
+        <div class="benefit"><div class="bcheck">✓</div><span>Upload outfit image for jewelry matching</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function formatError(detail) {
+      if (!detail) return 'Registration failed.';
+      if (typeof detail === 'string') return detail;
+      if (Array.isArray(detail)) {
+        const parts = detail.map((item) => {
+          if (typeof item === 'string') return item;
+          if (item && typeof item === 'object') {
+            const loc = Array.isArray(item.loc) ? item.loc.join('.') : '';
+            const msg = item.msg || 'Validation error';
+            return loc ? `${loc}: ${msg}` : msg;
+          }
+          return String(item);
+        });
+        return parts.join(' ');
+      }
+      if (typeof detail === 'object') {
+        if (detail.msg) return detail.msg;
+        if (detail.error) return detail.error;
+        return JSON.stringify(detail);
+      }
+      return String(detail);
+    }
+
+    document.getElementById('regForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = document.getElementById('errMsg'), ok = document.getElementById('okMsg'), btn = document.getElementById('submitBtn');
+      err.style.display = 'none'; ok.style.display = 'none';
+      const pw = document.getElementById('password').value, cf = document.getElementById('confirm').value;
+      if (pw !== cf) { err.textContent = 'Passwords do not match!'; err.style.display = 'block'; return; }
+      btn.textContent = 'Creating...'; btn.disabled = true;
+      try {
+        const res = await fetch('/register', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username:document.getElementById('username').value, full_name:document.getElementById('fullname').value, email:document.getElementById('email').value, password:pw})});
+        let data = {};
+        try { data = await res.json(); } catch { data = {}; }
+        if (res.ok) { ok.textContent = '✅ Account created! Redirecting to login...'; ok.style.display = 'block'; setTimeout(() => window.location.href = '/login', 1500); }
+        else { err.textContent = formatError(data.detail ?? data); err.style.display = 'block'; btn.textContent = 'Create Account →'; btn.disabled = false; }
+      } catch (error) { err.textContent = 'Connection error.'; err.style.display = 'block'; btn.textContent = 'Create Account →'; btn.disabled = false; }
+    });
+  </script>
+</body>
+</html>

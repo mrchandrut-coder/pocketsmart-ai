@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PocketSmart AI – Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--navy:#0F2D5A;--navy2:#0A2244;--navy3:#071A35;--blue:#1E6FD9;--blue-lt:#4189E8;--blue-pale:#EEF4FE;--blue-mid:#CCDCFB;--gold:#F5A623;--gold-lt:#FFD07A;--white:#FFFFFF;--off:#F7F9FC;--text:#0A1628;--text2:#1E2E46;--muted:#5C718A;--border:#DDE5F0;--shadow:0 4px 24px rgba(10,34,68,0.09);}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Nunito',sans-serif;color:var(--text);min-height:100vh;display:flex;background:var(--off);}
+    a{text-decoration:none;color:inherit;}
+
+    /* LEFT — form panel */
+    .left{width:46%;background:var(--white);border-right:2px solid var(--border);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:64px 56px;}
+    .left-wrap{width:100%;max-width:380px;}
+    .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:0.86rem;font-weight:700;margin-bottom:36px;transition:color .2s;}
+    .back-link:hover{color:var(--navy);}
+    .brand{font-size:1.4rem;font-weight:900;color:var(--navy);margin-bottom:4px;}
+    .brand .dot{color:var(--blue);}
+    .brand .ai{color:var(--gold);}
+    .brand-tag{font-size:0.85rem;font-weight:700;color:var(--muted);margin-bottom:32px;}
+    .page-title{font-size:1.75rem;font-weight:900;color:var(--text);margin-bottom:6px;}
+    .page-sub{font-size:0.92rem;font-weight:600;color:var(--muted);margin-bottom:28px;line-height:1.6;}
+    .form-group{margin-bottom:18px;}
+    .form-group label{display:block;font-size:0.86rem;font-weight:800;color:var(--text2);margin-bottom:7px;}
+    .inp-wrap{position:relative;}
+    .inp-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;}
+    input{width:100%;padding:13px 14px 13px 44px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:600;color:var(--text);background:var(--off);transition:border-color .2s,box-shadow .2s,background .2s;}
+    input:focus{outline:none;border-color:var(--blue);background:var(--white);box-shadow:0 0 0 3px rgba(30,111,217,0.1);}
+    input::placeholder{color:#9EB0C8;font-weight:600;}
+    .btn-submit{width:100%;padding:14px;background:var(--navy);color:var(--white);border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(15,45,90,0.28);transition:all .2s;margin-top:4px;}
+    .btn-submit:hover{background:var(--navy2);transform:translateY(-1px);box-shadow:0 6px 22px rgba(15,45,90,0.35);}
+    .btn-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
+    .err-box{background:#FEF2F2;border:2px solid #FECACA;color:#B91C1C;border-radius:10px;padding:10px 14px;font-size:0.88rem;font-weight:700;margin-bottom:16px;display:none;}
+    .switch{text-align:center;margin-top:22px;color:var(--muted);font-size:0.9rem;font-weight:700;}
+    .switch a{color:var(--blue);font-weight:800;}
+    .switch a:hover{color:var(--navy);}
+
+    /* RIGHT — info panel */
+    .right{flex:1;background:linear-gradient(155deg,var(--navy3) 0%,var(--navy) 55%,#1A4F9E 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:64px;position:relative;overflow:hidden;}
+    .right::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:36px 36px;}
+    .right-glow{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(30,111,217,0.4) 0%,transparent 70%);bottom:-100px;right:-100px;pointer-events:none;}
+    .right-inner{position:relative;z-index:1;max-width:380px;text-align:center;}
+    .right-inner h2{font-size:1.6rem;font-weight:900;color:var(--white);margin-bottom:10px;}
+    .right-inner p{font-size:0.93rem;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:36px;line-height:1.7;}
+    .feat-cards{display:flex;flex-direction:column;gap:14px;text-align:left;}
+    .feat-card{background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;transition:background .2s;}
+    .feat-card:hover{background:rgba(255,255,255,0.13);}
+    .feat-icon{font-size:1.5rem;width:38px;text-align:center;flex-shrink:0;}
+    .feat-text h4{font-size:0.9rem;font-weight:800;color:var(--white);margin-bottom:2px;}
+    .feat-text p{font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.6);}
+
+    @media(max-width:768px){.right{display:none;}.left{width:100%;padding:40px 24px;}}
+  </style>
+</head>
+<body>
+  <div class="left">
+    <div class="left-wrap">
+      <a href="/" class="back-link">← Back to Home</a>
+      <div class="brand">PocketSmart<span class="dot">.</span><span class="ai">AI</span></div>
+      <p class="brand-tag">Personalized Budget Planning</p>
+      <h1 class="page-title">Welcome Back 👋</h1>
+      <p class="page-sub">Sign in to access your personalized budget planner</p>
+      <div class="err-box" id="errBox"></div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Username</label>
+          <div class="inp-wrap"><span class="inp-icon">👤</span><input type="text" id="username" placeholder="Enter your username" required/></div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="inp-wrap"><span class="inp-icon">🔒</span><input type="password" id="password" placeholder="Enter your password" required/></div>
+        </div>
+        <button type="submit" class="btn-submit" id="submitBtn">Sign In →</button>
+      </form>
+      <p class="switch">Don't have an account? <a href="/register">Create one free</a></p>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="right-glow"></div>
+    <div class="right-inner">
+      <h2>Plan Smarter with AI</h2>
+      <p>Access all three powerful budget planners and save time while staying within your budget</p>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-icon">🏠</div><div class="feat-text"><h4>Home Interior Planner</h4><p>Smart furniture & decor within your budget</p></div></div>
+        <div class="feat-card"><div class="feat-icon">🎉</div><div class="feat-text"><h4>Party Budget Planner</h4><p>Event cost planning and allocation</p></div></div>
+        <div class="feat-card"><div class="feat-icon">💍</div><div class="feat-text"><h4>Jewelry Budget Planner</h4><p>Outfit-matched jewelry recommendations</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const eb = document.getElementById('errBox'), btn = document.getElementById('submitBtn');
+      btn.textContent = 'Signing in...'; btn.disabled = true; eb.style.display = 'none';
+      try {
+        const fd = new FormData();
+        fd.append('username', document.getElementById('username').value);
+        fd.append('password', document.getElementById('password').value);
+        const res = await fetch('/token', {method:'POST', body:fd, credentials:'same-origin'});
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.removeItem('token');
+          localStorage.setItem('username', document.getElementById('username').value);
+          window.location.href = '/dashboard';
+        } else {
+          eb.textContent = data.detail || 'Invalid username or password';
+          eb.style.display = 'block';
+          btn.textContent = 'Sign In →'; btn.disabled = false;
+        }
+      } catch { eb.textContent = 'Connection error. Please try again.'; eb.style.display = 'block'; btn.textContent = 'Sign In →'; btn.disabled = false; }
+    });
+  </script>
+</body>
+</html>
